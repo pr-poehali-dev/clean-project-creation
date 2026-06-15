@@ -95,6 +95,71 @@ const tStatus: Record<string, { label: string; cls: string }> = {
   live: { label: 'В эфире', cls: 'bg-red-500/15 text-red-500' },
 };
 
+const chats = [
+  {
+    id: 'dota',
+    name: 'Dota 2 Россия',
+    type: 'Сообщество',
+    last: 'GhostByte: турнир в субботу 🏆',
+    time: '12:48',
+    unread: 3,
+    color: 'from-red-500/30 to-orange-500/10',
+    icon: 'Swords',
+    online: true,
+    messages: [
+      { name: 'NeoStrike', text: 'Кто на вечерний рейтинг?', me: false, time: '12:40' },
+      { name: 'Вы', text: 'Я в деле, через 5 минут', me: true, time: '12:42' },
+      { name: 'LunaQueen', text: 'Тоже залетаю 🔥', me: false, time: '12:43' },
+      { name: 'GhostByte', text: 'Турнир в субботу, призовой 50к', me: false, time: '12:48' },
+    ],
+  },
+  {
+    id: 'valorant',
+    name: 'Valorant Squad',
+    type: 'Сообщество',
+    last: 'PixelWolf: го катку?',
+    time: '11:30',
+    unread: 0,
+    color: 'from-pink-500/30 to-rose-500/10',
+    icon: 'Crosshair',
+    online: true,
+    messages: [
+      { name: 'PixelWolf', text: 'Го катку?', me: false, time: '11:28' },
+      { name: 'Вы', text: 'Дай 10 минут', me: true, time: '11:30' },
+    ],
+  },
+  {
+    id: 'luna',
+    name: 'LunaQueen',
+    type: 'Личный чат',
+    last: 'Скинь свой ник в игре',
+    time: 'Вчера',
+    unread: 1,
+    color: 'from-violet-500/30 to-purple-500/10',
+    icon: 'User',
+    online: false,
+    messages: [
+      { name: 'LunaQueen', text: 'Привет! Видела твой клатч 🔥', me: false, time: 'Вчера' },
+      { name: 'Вы', text: 'Спасибо ) повезло', me: true, time: 'Вчера' },
+      { name: 'LunaQueen', text: 'Скинь свой ник в игре', me: false, time: 'Вчера' },
+    ],
+  },
+  {
+    id: 'cs2',
+    name: 'CS2 Pro League',
+    type: 'Сообщество',
+    last: 'Clutch Kings ищут пятого',
+    time: 'Пн',
+    unread: 0,
+    color: 'from-amber-500/30 to-yellow-500/10',
+    icon: 'Target',
+    online: true,
+    messages: [
+      { name: 'DarkRaven', text: 'Clutch Kings ищут пятого', me: false, time: 'Пн' },
+    ],
+  },
+];
+
 const Index = () => {
   const [active, setActive] = useState('Обзор');
   const [collapsed, setCollapsed] = useState(false);
@@ -102,6 +167,7 @@ const Index = () => {
   const [selected, setSelected] = useState<Community | null>(null);
   const [genre, setGenre] = useState('Все');
   const [gameFilter, setGameFilter] = useState<string | null>(null);
+  const [activeChat, setActiveChat] = useState(chats[0].id);
 
   const openGame = (gameName: string) => {
     setGameFilter(gameName);
@@ -481,6 +547,109 @@ const Index = () => {
                 );
               })}
             </div>
+          </div>
+        ) : active === 'Чаты' ? (
+          <div className="h-full grid grid-cols-1 md:grid-cols-[300px_1fr]">
+            {/* Chat list */}
+            <div className={`border-r overflow-y-auto ${t.border}`}>
+              <div className="p-4">
+                <h1 className={`text-[20px] font-700 tracking-tight ${t.text}`}>Чаты</h1>
+              </div>
+              <div className="px-2 pb-2 flex flex-col gap-1">
+                {chats.map((c) => {
+                  const isOpen = activeChat === c.id;
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => setActiveChat(c.id)}
+                      className={`flex items-center gap-3 p-2.5 rounded-2xl text-left transition-colors ${
+                        isOpen ? (dark ? 'bg-white/[0.07]' : 'bg-black/[0.05]') : t.hover
+                      }`}
+                    >
+                      <div className="relative shrink-0">
+                        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${c.color} flex items-center justify-center`}>
+                          <Icon name={c.icon} size={20} className={t.text} />
+                        </div>
+                        {c.online && (
+                          <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-500 border-2 ${dark ? 'border-[#1f1f1f]' : 'border-white'}`} />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className={`text-[14px] font-600 truncate ${t.text}`}>{c.name}</span>
+                          <span className={`text-[11px] shrink-0 ${t.muted}`}>{c.time}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-2">
+                          <span className={`text-[12px] truncate ${t.muted}`}>{c.last}</span>
+                          {c.unread > 0 && (
+                            <span className="shrink-0 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[11px] font-600 flex items-center justify-center">
+                              {c.unread}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Conversation */}
+            {(() => {
+              const chat = chats.find((c) => c.id === activeChat)!;
+              return (
+                <div className="flex flex-col h-full overflow-hidden">
+                  {/* Chat header */}
+                  <div className={`flex items-center gap-3 p-4 border-b shrink-0 ${t.border}`}>
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${chat.color} flex items-center justify-center`}>
+                      <Icon name={chat.icon} size={18} className={t.text} />
+                    </div>
+                    <div>
+                      <div className={`text-[15px] font-600 ${t.text}`}>{chat.name}</div>
+                      <div className={`text-[12px] ${t.muted}`}>
+                        {chat.online ? '🟢 в сети' : chat.type}
+                      </div>
+                    </div>
+                    <Icon name="Phone" size={18} className={`ml-auto ${t.muted}`} />
+                    <Icon name="MoreVertical" size={18} className={t.muted} />
+                  </div>
+
+                  {/* Messages */}
+                  <div className="flex-1 overflow-y-auto p-5 space-y-3">
+                    {chat.messages.map((m, i) => (
+                      <div key={i} className={`flex ${m.me ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`max-w-[70%] ${m.me ? 'items-end' : 'items-start'} flex flex-col`}>
+                          {!m.me && (
+                            <span className={`text-[12px] font-500 mb-1 px-1 ${t.muted}`}>{m.name}</span>
+                          )}
+                          <div
+                            className={`px-3.5 py-2.5 rounded-2xl text-[14px] ${
+                              m.me
+                                ? `${t.activeBtn} rounded-br-md`
+                                : `${dark ? 'bg-white/[0.07] text-white' : 'bg-black/[0.05] text-[#1a1a1a]'} rounded-bl-md`
+                            }`}
+                          >
+                            {m.text}
+                          </div>
+                          <span className={`text-[11px] mt-1 px-1 ${t.muted}`}>{m.time}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Input */}
+                  <div className="p-4 shrink-0">
+                    <div className={`flex items-center gap-2 h-12 px-4 rounded-full border ${t.border}`}>
+                      <Icon name="Smile" size={18} className={t.muted} />
+                      <span className={`text-[14px] flex-1 ${t.muted}`}>Написать сообщение...</span>
+                      <button className={`w-9 h-9 rounded-full flex items-center justify-center ${t.activeBtn}`}>
+                        <Icon name="Send" size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         ) : (
           <div className="h-full flex items-center justify-center">
