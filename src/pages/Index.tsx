@@ -61,11 +61,25 @@ const chatMessages = [
   { name: 'LunaQueen', text: 'Тоже залетаю 🔥' },
 ];
 
+const games = [
+  { name: 'Dota 2', genre: 'MOBA', communities: 312, players: '11.2M', rating: 4.7, icon: 'Swords', color: 'from-red-500/30 to-orange-500/10' },
+  { name: 'Valorant', genre: 'Шутер', communities: 248, players: '8.4M', rating: 4.6, icon: 'Crosshair', color: 'from-pink-500/30 to-rose-500/10' },
+  { name: 'Minecraft', genre: 'Песочница', communities: 521, players: '21.7M', rating: 4.9, icon: 'Box', color: 'from-green-500/30 to-emerald-500/10' },
+  { name: 'Counter-Strike 2', genre: 'Шутер', communities: 419, players: '15.2M', rating: 4.8, icon: 'Target', color: 'from-amber-500/30 to-yellow-500/10' },
+  { name: 'League of Legends', genre: 'MOBA', communities: 287, players: '13.5M', rating: 4.5, icon: 'Shield', color: 'from-blue-500/30 to-indigo-500/10' },
+  { name: 'Fortnite', genre: 'Battle Royale', communities: 389, players: '18.9M', rating: 4.4, icon: 'Castle', color: 'from-violet-500/30 to-purple-500/10' },
+  { name: 'Cyberpunk 2077', genre: 'RPG', communities: 96, players: '5.6M', rating: 4.3, icon: 'Cpu', color: 'from-cyan-500/30 to-blue-500/10' },
+  { name: 'Apex Legends', genre: 'Battle Royale', communities: 174, players: '9.1M', rating: 4.5, icon: 'Zap', color: 'from-orange-500/30 to-red-500/10' },
+];
+
+const genres = ['Все', 'MOBA', 'Шутер', 'Battle Royale', 'RPG', 'Песочница'];
+
 const Index = () => {
   const [active, setActive] = useState('Обзор');
   const [collapsed, setCollapsed] = useState(false);
   const [dark, setDark] = useState(false);
   const [selected, setSelected] = useState<Community | null>(null);
+  const [genre, setGenre] = useState('Все');
 
   const t = {
     page: dark ? 'bg-[#161616]' : 'bg-[#f3f3f3]',
@@ -297,6 +311,65 @@ const Index = () => {
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+        ) : active === 'Игры' ? (
+          <div className="p-7">
+            {/* Header */}
+            <div className="mb-6">
+              <h1 className={`text-[28px] font-700 tracking-tight ${t.text}`}>Каталог игр</h1>
+              <p className={`text-[15px] mt-1 ${t.muted}`}>
+                Выбери игру и найди сообщества по своему вкусу
+              </p>
+            </div>
+
+            {/* Genre filters */}
+            <div className="flex flex-wrap gap-2 mb-7">
+              {genres.map((g) => (
+                <button
+                  key={g}
+                  onClick={() => setGenre(g)}
+                  className={`h-9 px-4 rounded-full text-[14px] font-500 transition-colors ${
+                    genre === g ? t.activeBtn : `border ${t.border} ${t.text} ${t.hover}`
+                  }`}
+                >
+                  {g}
+                </button>
+              ))}
+            </div>
+
+            {/* Games grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              {games
+                .filter((g) => genre === 'Все' || g.genre === genre)
+                .map((g) => (
+                  <div
+                    key={g.name}
+                    className={`group rounded-2xl border overflow-hidden transition-all hover:-translate-y-1 cursor-pointer ${t.border}`}
+                  >
+                    {/* Cover */}
+                    <div className={`relative h-32 bg-gradient-to-br ${g.color} flex items-center justify-center`}>
+                      <Icon name={g.icon} size={44} className={t.text} />
+                      <span className={`absolute top-3 right-3 flex items-center gap-1 text-[12px] font-600 px-2 py-1 rounded-full ${dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'}`}>
+                        <Icon name="Star" size={12} className="text-amber-400" />
+                        {g.rating}
+                      </span>
+                    </div>
+                    {/* Info */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className={`text-[17px] font-600 ${t.text}`}>{g.name}</h3>
+                        <span className={`text-[11px] font-500 px-2 py-0.5 rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
+                          {g.genre}
+                        </span>
+                      </div>
+                      <div className={`flex items-center gap-4 text-[13px] ${t.muted}`}>
+                        <span className="flex items-center gap-1.5"><Icon name="Users" size={14} />{g.communities} сообществ</span>
+                        <span className="flex items-center gap-1.5"><Icon name="Gamepad2" size={14} />{g.players}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         ) : (
