@@ -80,6 +80,21 @@ const games = [
 
 const genres = ['Все', 'MOBA', 'Шутер', 'Battle Royale', 'RPG', 'Песочница'];
 
+const tournaments = [
+  { name: 'Winter Clash 2026', game: 'Dota 2', prize: '500 000 ₽', date: '24 июня', teams: '32 / 32', status: 'soon', icon: 'Swords', color: 'from-red-500/30 to-orange-500/10' },
+  { name: 'Radiant Cup', game: 'Valorant', prize: '250 000 ₽', date: '28 июня', teams: '18 / 24', status: 'open', icon: 'Crosshair', color: 'from-pink-500/30 to-rose-500/10' },
+  { name: 'Major Arena', game: 'Counter-Strike 2', prize: '1 200 000 ₽', date: '5 июля', teams: '12 / 16', status: 'open', icon: 'Target', color: 'from-amber-500/30 to-yellow-500/10' },
+  { name: 'Block Battle', game: 'Minecraft', prize: '120 000 ₽', date: '12 июля', teams: '64 / 64', status: 'soon', icon: 'Box', color: 'from-green-500/30 to-emerald-500/10' },
+  { name: 'Rift Showdown', game: 'League of Legends', prize: '380 000 ₽', date: '19 июля', teams: '9 / 16', status: 'open', icon: 'Shield', color: 'from-blue-500/30 to-indigo-500/10' },
+  { name: 'Last Squad Standing', game: 'Fortnite', prize: '300 000 ₽', date: '14 июня', teams: '100 / 100', status: 'live', icon: 'Castle', color: 'from-violet-500/30 to-purple-500/10' },
+];
+
+const tStatus: Record<string, { label: string; cls: string }> = {
+  open: { label: 'Регистрация открыта', cls: 'bg-green-500/15 text-green-500' },
+  soon: { label: 'Скоро старт', cls: 'bg-amber-500/15 text-amber-500' },
+  live: { label: 'В эфире', cls: 'bg-red-500/15 text-red-500' },
+};
+
 const Index = () => {
   const [active, setActive] = useState('Обзор');
   const [collapsed, setCollapsed] = useState(false);
@@ -401,6 +416,70 @@ const Index = () => {
                     </div>
                   </div>
                 ))}
+            </div>
+          </div>
+        ) : active === 'Турниры' ? (
+          <div className="p-7">
+            {/* Header */}
+            <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
+              <div>
+                <h1 className={`text-[28px] font-700 tracking-tight ${t.text}`}>Турниры</h1>
+                <p className={`text-[15px] mt-1 ${t.muted}`}>
+                  Собирай команду, регистрируйся и сражайся за призовой фонд
+                </p>
+              </div>
+              <div className={`flex items-center gap-2 h-11 px-5 rounded-full border ${t.border} ${t.text}`}>
+                <Icon name="Trophy" size={18} className="text-amber-500" />
+                <span className="font-600">2.75M ₽</span>
+                <span className={`text-[13px] ${t.muted}`}>общий фонд</span>
+              </div>
+            </div>
+
+            {/* Tournaments list */}
+            <div className="flex flex-col gap-3">
+              {tournaments.map((tr) => {
+                const st = tStatus[tr.status];
+                return (
+                  <div
+                    key={tr.name}
+                    className={`group flex items-center gap-4 rounded-2xl border p-4 transition-all hover:-translate-y-0.5 ${t.border}`}
+                  >
+                    <div className={`w-14 h-14 rounded-xl shrink-0 bg-gradient-to-br ${tr.color} flex items-center justify-center`}>
+                      <Icon name={tr.icon} size={26} className={t.text} />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2.5 flex-wrap">
+                        <h3 className={`text-[16px] font-600 ${t.text}`}>{tr.name}</h3>
+                        <span className={`text-[11px] font-500 px-2 py-0.5 rounded-full ${st.cls}`}>
+                          {tr.status === 'live' && (
+                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500 mr-1 animate-pulse" />
+                          )}
+                          {st.label}
+                        </span>
+                      </div>
+                      <div className={`flex items-center gap-4 text-[13px] mt-1 ${t.muted}`}>
+                        <span className="flex items-center gap-1.5"><Icon name="Gamepad2" size={14} />{tr.game}</span>
+                        <span className="flex items-center gap-1.5"><Icon name="Calendar" size={14} />{tr.date}</span>
+                        <span className="flex items-center gap-1.5"><Icon name="Users" size={14} />{tr.teams}</span>
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0 hidden sm:block">
+                      <div className={`text-[18px] font-700 ${t.text}`}>{tr.prize}</div>
+                      <div className={`text-[12px] ${t.muted}`}>призовой фонд</div>
+                    </div>
+
+                    <button
+                      className={`shrink-0 h-10 px-5 rounded-full text-[14px] font-500 transition-colors ${
+                        tr.status === 'open' ? t.activeBtn : `border ${t.border} ${t.text} ${t.hover}`
+                      }`}
+                    >
+                      {tr.status === 'live' ? 'Смотреть' : tr.status === 'open' ? 'Участвовать' : 'Напомнить'}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         ) : (
