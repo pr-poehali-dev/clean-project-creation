@@ -160,6 +160,13 @@ const chats = [
   },
 ];
 
+const feedTabs = [
+  { key: 'all', label: 'Всё', icon: 'LayoutGrid' },
+  { key: 'video', label: 'Видео', icon: 'Video' },
+  { key: 'thread', label: 'Обсуждения', icon: 'MessageSquare' },
+  { key: 'news', label: 'Новости', icon: 'Newspaper' },
+];
+
 const feed = [
   {
     type: 'thread',
@@ -258,6 +265,7 @@ const Index = () => {
   const [genre, setGenre] = useState('Все');
   const [gameFilter, setGameFilter] = useState<string | null>(null);
   const [activeChat, setActiveChat] = useState(chats[0].id);
+  const [feedTab, setFeedTab] = useState('all');
 
   const openGame = (gameName: string) => {
     setGameFilter(gameName);
@@ -451,9 +459,27 @@ const Index = () => {
               </button>
             </div>
 
+            {/* Filter tabs */}
+            <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
+              {feedTabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setFeedTab(tab.key)}
+                  className={`flex items-center gap-1.5 h-9 px-4 rounded-full text-[14px] font-500 whitespace-nowrap transition-colors ${
+                    feedTab === tab.key ? t.activeBtn : `border ${t.border} ${t.text} ${t.hover}`
+                  }`}
+                >
+                  <Icon name={tab.icon} size={15} />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
             {/* Feed */}
             <div className="flex flex-col gap-4">
-              {feed.map((p, i) => (
+              {feed
+                .filter((p) => feedTab === 'all' || p.type === feedTab)
+                .map((p, i) => (
                 <article key={i} className={`rounded-2xl border p-4 ${t.border}`}>
                   {/* Author */}
                   <div className="flex items-center gap-2.5 mb-3">
