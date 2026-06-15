@@ -51,19 +51,29 @@ const Index = () => {
             )}
           </div>
           {!collapsed && (
-            <div className="flex items-center gap-2.5 text-[#9a9a9a]">
+            <div className="flex items-center gap-3 text-[#9a9a9a]">
               <Icon name="CircleHelp" size={18} />
+              <button
+                onClick={() => setCollapsed(true)}
+                title="Свернуть"
+                className="hover:text-[#1a1a1a] transition-colors"
+              >
+                <Icon name="Scaling" size={18} />
+              </button>
             </div>
           )}
         </div>
 
-        {/* Collapse toggle */}
-        <button
-          onClick={() => setCollapsed((v) => !v)}
-          className="absolute top-[52px] -right-3 z-10 w-7 h-7 rounded-lg bg-white border border-black/[0.08] shadow-sm flex items-center justify-center text-[#1a1a1a] hover:bg-black/[0.03] transition-colors"
-        >
-          <Icon name={collapsed ? 'ChevronRight' : 'ChevronLeft'} size={15} />
-        </button>
+        {/* Expand button (collapsed) */}
+        {collapsed && (
+          <button
+            onClick={() => setCollapsed(false)}
+            title="Развернуть"
+            className="absolute top-[18px] -right-[18px] z-10 w-9 h-9 rounded-xl bg-white border border-black/[0.08] shadow-[0_2px_10px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#1a1a1a] hover:bg-black/[0.03] transition-colors"
+          >
+            <Icon name="Scaling" size={17} />
+          </button>
+        )}
 
         {/* Search */}
         <div
