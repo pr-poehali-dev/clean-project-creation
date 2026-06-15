@@ -5,18 +5,18 @@ const AVATAR =
   'https://cdn.poehali.dev/projects/0b0686e1-0368-4333-82d7-e68c465aed2e/bucket/3e4aeea1-36ab-478f-bb7f-78e2fe00b6cc.jpg';
 
 const mainMenu = [
-  { icon: 'Pentagon', label: 'Overview' },
-  { icon: 'Filter', label: 'Filters' },
-  { icon: 'Bookmark', label: 'Saved Jobs' },
-  { icon: 'File', label: 'Applications' },
-  { icon: 'Atom', label: 'Skill Assessments' },
-  { icon: 'GalleryThumbnails', label: 'Learning Resources', fallback: 'SquarePlus' },
+  { icon: 'Pentagon', label: 'Обзор' },
+  { icon: 'Filter', label: 'Фильтры' },
+  { icon: 'Bookmark', label: 'Избранное' },
+  { icon: 'File', label: 'Отклики' },
+  { icon: 'Atom', label: 'Тесты навыков' },
+  { icon: 'GalleryThumbnails', label: 'Обучение', fallback: 'SquarePlus' },
 ];
 
 const others = [
-  { icon: 'CircleUserRound', label: 'Account' },
-  { icon: 'Bell', label: 'Notifications' },
-  { icon: 'Settings', label: 'Settings' },
+  { icon: 'CircleUserRound', label: 'Аккаунт' },
+  { icon: 'Bell', label: 'Уведомления' },
+  { icon: 'Settings', label: 'Настройки' },
 ];
 
 const Logo = ({ size = 26 }: { size?: number }) => (
@@ -29,7 +29,7 @@ const Logo = ({ size = 26 }: { size?: number }) => (
 );
 
 const Index = () => {
-  const [active, setActive] = useState('Overview');
+  const [active, setActive] = useState('Обзор');
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -82,13 +82,13 @@ const Index = () => {
           }`}
         >
           <Icon name="Search" size={17} className="text-[#b3b3b3]" />
-          {!collapsed && <span className="text-[15px] text-[#b3b3b3]">Search...</span>}
+          {!collapsed && <span className="text-[15px] text-[#b3b3b3]">Поиск...</span>}
         </div>
 
         {/* Main menu */}
         {!collapsed && (
           <p className="mt-5 mb-1.5 px-1 text-[11px] tracking-[0.08em] text-[#9a9a9a] font-500">
-            MAIN MENU
+ГЛАВНОЕ МЕНЮ
           </p>
         )}
         {collapsed && <div className="mt-4 mb-2 w-6 h-px bg-black/10" />}
@@ -118,7 +118,7 @@ const Index = () => {
         {/* Others */}
         {!collapsed && (
           <p className="mt-5 mb-1.5 px-1 text-[11px] tracking-[0.08em] text-[#9a9a9a] font-500">
-            OTHERS
+ПРОЧЕЕ
           </p>
         )}
         {collapsed && <div className="mt-4 mb-2 w-6 h-px bg-black/10" />}
@@ -137,13 +137,13 @@ const Index = () => {
             </button>
           ))}
           <button
-            title="Logout"
+            title="Выход"
             className={`flex items-center rounded-full text-[15px] text-[#ef4444] hover:bg-red-50 transition-colors font-500 ${
               collapsed ? 'w-10 h-10 justify-center' : 'gap-3 h-11 px-3.5'
             }`}
           >
             <Icon name="LogOut" size={19} />
-            {!collapsed && 'Logout'}
+            {!collapsed && 'Выход'}
           </button>
         </nav>
 
