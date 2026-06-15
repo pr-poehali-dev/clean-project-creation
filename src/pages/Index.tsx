@@ -823,68 +823,108 @@ const Index = () => {
             </div>
           </div>
         ) : active === 'Турниры' ? (
-          <div className="p-7">
-            {/* Header */}
-            <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
-              <div>
-                <h1 className={`text-[28px] font-700 tracking-tight ${t.text}`}>Турниры</h1>
-                <p className={`text-[15px] mt-1 ${t.muted}`}>
+          <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-6 max-w-[1040px] mx-auto p-5 sm:p-7">
+            <div>
+              {/* Header */}
+              <div className="mb-5">
+                <h1 className={`text-[26px] font-700 tracking-tight ${t.text}`}>Турниры</h1>
+                <p className={`text-[14px] mt-0.5 ${t.muted}`}>
                   Собирай команду, регистрируйся и сражайся за призовой фонд
                 </p>
               </div>
-              <div className={`flex items-center gap-2 h-11 px-5 rounded-full border ${t.border} ${t.text}`}>
-                <Icon name="Trophy" size={18} className="text-amber-500" />
-                <span className="font-600">2.75M ₽</span>
-                <span className={`text-[13px] ${t.muted}`}>общий фонд</span>
+
+              {/* Tournaments list */}
+              <div className="flex flex-col gap-4">
+                {tournaments.map((tr) => {
+                  const st = tStatus[tr.status];
+                  return (
+                    <article
+                      key={tr.name}
+                      className={`group rounded-2xl border p-4 transition-all hover:-translate-y-0.5 ${t.border}`}
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div className={`w-14 h-14 rounded-2xl shrink-0 bg-gradient-to-br ${tr.color} flex items-center justify-center`}>
+                          <Icon name={tr.icon} size={26} className={t.text} />
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2.5 flex-wrap">
+                            <h3 className={`text-[16px] font-600 ${t.text}`}>{tr.name}</h3>
+                            <span className={`text-[11px] font-500 px-2 py-0.5 rounded-full ${st.cls}`}>
+                              {tr.status === 'live' && (
+                                <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500 mr-1 animate-pulse" />
+                              )}
+                              {st.label}
+                            </span>
+                          </div>
+                          <div className={`flex items-center gap-4 text-[13px] mt-1 ${t.muted}`}>
+                            <span className="flex items-center gap-1.5"><Icon name="Gamepad2" size={14} />{tr.game}</span>
+                            <span className="flex items-center gap-1.5"><Icon name="Calendar" size={14} />{tr.date}</span>
+                            <span className="flex items-center gap-1.5"><Icon name="Users" size={14} />{tr.teams}</span>
+                          </div>
+                        </div>
+
+                        <button
+                          className={`shrink-0 h-9 px-5 rounded-full text-[14px] font-500 transition-colors ${
+                            tr.status === 'open' ? t.activeBtn : `border ${t.border} ${t.text} ${t.hover}`
+                          }`}
+                        >
+                          {tr.status === 'live' ? 'Смотреть' : tr.status === 'open' ? 'Участвовать' : 'Напомнить'}
+                        </button>
+                      </div>
+
+                      <div className={`flex items-center gap-1.5 mt-3 pt-3 border-t text-[13px] ${t.border} ${t.muted}`}>
+                        <Icon name="Trophy" size={15} className="text-amber-500" />
+                        Призовой фонд
+                        <span className={`ml-auto text-[16px] font-700 ${t.text}`}>{tr.prize}</span>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Tournaments list */}
-            <div className="flex flex-col gap-3">
-              {tournaments.map((tr) => {
-                const st = tStatus[tr.status];
-                return (
-                  <div
-                    key={tr.name}
-                    className={`group flex items-center gap-4 rounded-2xl border p-4 transition-all hover:-translate-y-0.5 ${t.border}`}
-                  >
-                    <div className={`w-14 h-14 rounded-xl shrink-0 bg-gradient-to-br ${tr.color} flex items-center justify-center`}>
-                      <Icon name={tr.icon} size={26} className={t.text} />
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2.5 flex-wrap">
-                        <h3 className={`text-[16px] font-600 ${t.text}`}>{tr.name}</h3>
-                        <span className={`text-[11px] font-500 px-2 py-0.5 rounded-full ${st.cls}`}>
-                          {tr.status === 'live' && (
-                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500 mr-1 animate-pulse" />
-                          )}
-                          {st.label}
-                        </span>
-                      </div>
-                      <div className={`flex items-center gap-4 text-[13px] mt-1 ${t.muted}`}>
-                        <span className="flex items-center gap-1.5"><Icon name="Gamepad2" size={14} />{tr.game}</span>
-                        <span className="flex items-center gap-1.5"><Icon name="Calendar" size={14} />{tr.date}</span>
-                        <span className="flex items-center gap-1.5"><Icon name="Users" size={14} />{tr.teams}</span>
-                      </div>
-                    </div>
-
-                    <div className="text-right shrink-0 hidden sm:block">
-                      <div className={`text-[18px] font-700 ${t.text}`}>{tr.prize}</div>
-                      <div className={`text-[12px] ${t.muted}`}>призовой фонд</div>
-                    </div>
-
-                    <button
-                      className={`shrink-0 h-10 px-5 rounded-full text-[14px] font-500 transition-colors ${
-                        tr.status === 'open' ? t.activeBtn : `border ${t.border} ${t.text} ${t.hover}`
-                      }`}
-                    >
-                      {tr.status === 'live' ? 'Смотреть' : tr.status === 'open' ? 'Участвовать' : 'Напомнить'}
-                    </button>
+            {/* Right sidebar */}
+            <aside className="hidden xl:flex flex-col gap-4 sticky top-0 self-start">
+              {/* Prize pool */}
+              <div className={`rounded-2xl border p-4 ${t.border}`}>
+                <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>ОБЩИЙ ПРИЗОВОЙ ФОНД</h3>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500/30 to-yellow-500/10 flex items-center justify-center">
+                    <Icon name="Trophy" size={22} className="text-amber-500" />
                   </div>
-                );
-              })}
-            </div>
+                  <div>
+                    <div className={`text-[22px] font-700 ${t.text}`}>2.75M ₽</div>
+                    <div className={`text-[12px] ${t.muted}`}>в 6 турнирах</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Live now */}
+              <div className={`rounded-2xl border p-4 ${t.border}`}>
+                <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>СЕЙЧАС В ЭФИРЕ</h3>
+                <div className="flex flex-col gap-3">
+                  {tournaments.filter((tr) => tr.status === 'live').map((tr) => (
+                    <div key={tr.name} className="flex items-center gap-2.5">
+                      <div className={`w-9 h-9 rounded-xl shrink-0 bg-gradient-to-br ${tr.color} flex items-center justify-center`}>
+                        <Icon name={tr.icon} size={17} className={t.text} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className={`text-[13px] font-600 truncate ${t.text}`}>{tr.name}</div>
+                        <div className="flex items-center gap-1 text-[11px] text-red-500">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                          в эфире
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className={`text-[11px] px-1 ${t.muted}`}>
+                GuildHub © 2026 · Платформа игровых сообществ
+              </p>
+            </aside>
           </div>
         ) : active === 'Чаты' ? (
           <div className="h-full grid grid-cols-1 md:grid-cols-[300px_1fr]">
@@ -990,56 +1030,106 @@ const Index = () => {
             })()}
           </div>
         ) : active === 'События' ? (
-          <div className="p-7">
-            {/* Header */}
-            <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
-              <div>
-                <h1 className={`text-[28px] font-700 tracking-tight ${t.text}`}>События</h1>
-                <p className={`text-[15px] mt-1 ${t.muted}`}>
+          <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-6 max-w-[1040px] mx-auto p-5 sm:p-7">
+            <div>
+              {/* Header */}
+              <div className="mb-5">
+                <h1 className={`text-[26px] font-700 tracking-tight ${t.text}`}>События</h1>
+                <p className={`text-[14px] mt-0.5 ${t.muted}`}>
                   Стримы, ивенты и встречи сообществ — не пропусти ничего
                 </p>
               </div>
-              <button className={`flex items-center gap-2 h-11 px-5 rounded-full font-500 text-[15px] ${t.activeBtn}`}>
-                <Icon name="CalendarPlus" size={18} />
-                Создать событие
-              </button>
-            </div>
 
-            {/* Events list */}
-            <div className="flex flex-col gap-3">
-              {events.map((e) => (
-                <div
-                  key={e.name}
-                  className={`group flex items-center gap-4 rounded-2xl border p-4 transition-all hover:-translate-y-0.5 ${t.border}`}
-                >
-                  {/* Date */}
-                  <div className={`w-14 h-14 rounded-xl shrink-0 bg-gradient-to-br ${e.color} flex flex-col items-center justify-center`}>
-                    <span className={`text-[20px] font-700 leading-none ${t.text}`}>{e.day}</span>
-                    <span className={`text-[10px] font-600 tracking-wider ${t.muted}`}>{e.month}</span>
-                  </div>
-
-                  {/* Info */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2.5 flex-wrap">
-                      <h3 className={`text-[16px] font-600 ${t.text}`}>{e.name}</h3>
-                      <span className={`flex items-center gap-1 text-[11px] font-500 px-2 py-0.5 rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
-                        <Icon name={e.icon} size={11} />
-                        {e.type}
-                      </span>
-                    </div>
-                    <div className={`flex items-center gap-4 text-[13px] mt-1 ${t.muted}`}>
-                      <span className="flex items-center gap-1.5"><Icon name="Clock" size={14} />{e.time}</span>
-                      <span className="flex items-center gap-1.5"><Icon name="User" size={14} />{e.host}</span>
-                      <span className="flex items-center gap-1.5"><Icon name="Users" size={14} />{e.members} идут</span>
-                    </div>
-                  </div>
-
-                  <button className={`shrink-0 h-10 px-5 rounded-full text-[14px] font-500 transition-colors border ${t.border} ${t.text} ${t.hover}`}>
-                    Участвовать
-                  </button>
+              {/* Create event bar */}
+              <div className={`flex items-center gap-3 rounded-2xl border p-3 mb-5 ${t.border}`}>
+                <div className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center ${t.activeBtn}`}>
+                  <Icon name="CalendarPlus" size={20} />
                 </div>
-              ))}
+                <span className={`text-[15px] flex-1 ${t.muted}`}>Запланируй своё событие</span>
+                <button className={`h-9 px-4 rounded-full text-[14px] font-500 ${t.activeBtn}`}>
+                  Создать
+                </button>
+              </div>
+
+              {/* Events list */}
+              <div className="flex flex-col gap-4">
+                {events.map((e) => (
+                  <article
+                    key={e.name}
+                    className={`group rounded-2xl border p-4 transition-all hover:-translate-y-0.5 ${t.border}`}
+                  >
+                    <div className="flex items-center gap-3.5">
+                      {/* Date */}
+                      <div className={`w-14 h-14 rounded-2xl shrink-0 bg-gradient-to-br ${e.color} flex flex-col items-center justify-center`}>
+                        <span className={`text-[20px] font-700 leading-none ${t.text}`}>{e.day}</span>
+                        <span className={`text-[10px] font-600 tracking-wider ${t.muted}`}>{e.month}</span>
+                      </div>
+
+                      {/* Info */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <h3 className={`text-[16px] font-600 ${t.text}`}>{e.name}</h3>
+                          <span className={`flex items-center gap-1 text-[11px] font-500 px-2 py-0.5 rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
+                            <Icon name={e.icon} size={11} />
+                            {e.type}
+                          </span>
+                        </div>
+                        <div className={`flex items-center gap-4 text-[13px] mt-1 ${t.muted}`}>
+                          <span className="flex items-center gap-1.5"><Icon name="Clock" size={14} />{e.time}</span>
+                          <span className="flex items-center gap-1.5"><Icon name="User" size={14} />{e.host}</span>
+                          <span className="flex items-center gap-1.5"><Icon name="Users" size={14} />{e.members} идут</span>
+                        </div>
+                      </div>
+
+                      <button className={`shrink-0 h-9 px-5 rounded-full text-[14px] font-500 transition-colors border ${t.border} ${t.text} ${t.hover}`}>
+                        Участвовать
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
+
+            {/* Right sidebar */}
+            <aside className="hidden xl:flex flex-col gap-4 sticky top-0 self-start">
+              {/* This week */}
+              <div className={`rounded-2xl border p-4 ${t.border}`}>
+                <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>НА ЭТОЙ НЕДЕЛЕ</h3>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500/30 to-blue-500/10 flex items-center justify-center">
+                    <Icon name="CalendarCheck" size={22} className="text-cyan-500" />
+                  </div>
+                  <div>
+                    <div className={`text-[22px] font-700 ${t.text}`}>{events.length}</div>
+                    <div className={`text-[12px] ${t.muted}`}>событий запланировано</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* By type */}
+              <div className={`rounded-2xl border p-4 ${t.border}`}>
+                <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>ТИПЫ СОБЫТИЙ</h3>
+                <div className="flex flex-col gap-3">
+                  {[...new Set(events.map((e) => e.type))].map((type) => {
+                    const ev = events.find((e) => e.type === type)!;
+                    const count = events.filter((e) => e.type === type).length;
+                    return (
+                      <div key={type} className="flex items-center gap-2.5">
+                        <div className={`w-9 h-9 rounded-xl shrink-0 bg-gradient-to-br ${ev.color} flex items-center justify-center`}>
+                          <Icon name={ev.icon} size={17} className={t.text} />
+                        </div>
+                        <span className={`text-[13px] flex-1 font-500 ${t.text}`}>{type}</span>
+                        <span className={`text-[13px] ${t.muted}`}>{count}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <p className={`text-[11px] px-1 ${t.muted}`}>
+                GuildHub © 2026 · Платформа игровых сообществ
+              </p>
+            </aside>
           </div>
         ) : (
           <div className="h-full flex items-center justify-center">
