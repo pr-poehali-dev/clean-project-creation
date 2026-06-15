@@ -20,12 +20,18 @@ const others = [
 ];
 
 const communities = [
-  { name: 'Dota 2 Россия', members: '12.4K', tag: 'MOBA', online: 842, color: 'from-red-500/20 to-orange-500/10', icon: 'Swords' },
-  { name: 'Valorant Squad', members: '8.1K', tag: 'Шутер', online: 531, color: 'from-pink-500/20 to-rose-500/10', icon: 'Crosshair' },
-  { name: 'Minecraft Builders', members: '21.7K', tag: 'Песочница', online: 1203, color: 'from-green-500/20 to-emerald-500/10', icon: 'Box' },
-  { name: 'CS2 Pro League', members: '15.2K', tag: 'Шутер', online: 967, color: 'from-amber-500/20 to-yellow-500/10', icon: 'Target' },
-  { name: 'Cyberpunk Lore', members: '5.6K', tag: 'RPG', online: 214, color: 'from-cyan-500/20 to-blue-500/10', icon: 'Cpu' },
-  { name: 'Fortnite Builders', members: '18.9K', tag: 'Battle Royale', online: 1521, color: 'from-violet-500/20 to-purple-500/10', icon: 'Castle' },
+  { name: 'Dota 2 Россия', game: 'Dota 2', members: '12.4K', tag: 'MOBA', online: 842, color: 'from-red-500/20 to-orange-500/10', icon: 'Swords' },
+  { name: 'Mid or Feed', game: 'Dota 2', members: '6.3K', tag: 'MOBA', online: 318, color: 'from-red-500/20 to-rose-500/10', icon: 'Swords' },
+  { name: 'Valorant Squad', game: 'Valorant', members: '8.1K', tag: 'Шутер', online: 531, color: 'from-pink-500/20 to-rose-500/10', icon: 'Crosshair' },
+  { name: 'Radiant Climb', game: 'Valorant', members: '4.2K', tag: 'Шутер', online: 199, color: 'from-pink-500/20 to-fuchsia-500/10', icon: 'Crosshair' },
+  { name: 'Minecraft Builders', game: 'Minecraft', members: '21.7K', tag: 'Песочница', online: 1203, color: 'from-green-500/20 to-emerald-500/10', icon: 'Box' },
+  { name: 'Redstone Masters', game: 'Minecraft', members: '9.8K', tag: 'Песочница', online: 644, color: 'from-green-500/20 to-lime-500/10', icon: 'Box' },
+  { name: 'CS2 Pro League', game: 'Counter-Strike 2', members: '15.2K', tag: 'Шутер', online: 967, color: 'from-amber-500/20 to-yellow-500/10', icon: 'Target' },
+  { name: 'Clutch Kings', game: 'Counter-Strike 2', members: '7.5K', tag: 'Шутер', online: 421, color: 'from-amber-500/20 to-orange-500/10', icon: 'Target' },
+  { name: 'Cyberpunk Lore', game: 'Cyberpunk 2077', members: '5.6K', tag: 'RPG', online: 214, color: 'from-cyan-500/20 to-blue-500/10', icon: 'Cpu' },
+  { name: 'Fortnite Builders', game: 'Fortnite', members: '18.9K', tag: 'Battle Royale', online: 1521, color: 'from-violet-500/20 to-purple-500/10', icon: 'Castle' },
+  { name: 'Summoner Rift', game: 'League of Legends', members: '11.3K', tag: 'MOBA', online: 702, color: 'from-blue-500/20 to-indigo-500/10', icon: 'Shield' },
+  { name: 'Apex Predators', game: 'Apex Legends', members: '6.9K', tag: 'Battle Royale', online: 388, color: 'from-orange-500/20 to-red-500/10', icon: 'Zap' },
 ];
 
 const Logo = ({ size = 26, dark }: { size?: number; dark?: boolean }) => (
@@ -80,6 +86,12 @@ const Index = () => {
   const [dark, setDark] = useState(false);
   const [selected, setSelected] = useState<Community | null>(null);
   const [genre, setGenre] = useState('Все');
+  const [gameFilter, setGameFilter] = useState<string | null>(null);
+
+  const openGame = (gameName: string) => {
+    setGameFilter(gameName);
+    setActive('Сообщества');
+  };
 
   const t = {
     page: dark ? 'bg-[#161616]' : 'bg-[#f3f3f3]',
@@ -166,7 +178,10 @@ const Index = () => {
             return (
               <button
                 key={item.label}
-                onClick={() => setActive(item.label)}
+                onClick={() => {
+                  setActive(item.label);
+                  setGameFilter(null);
+                }}
                 title={item.label}
                 className={`flex items-center rounded-full text-[15px] transition-colors ${
                   collapsed ? 'w-10 h-10 justify-center' : 'gap-3 h-11 px-3.5'
@@ -247,11 +262,22 @@ const Index = () => {
             {/* Hero */}
             <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
               <div>
+                {gameFilter && (
+                  <button
+                    onClick={() => setGameFilter(null)}
+                    className={`flex items-center gap-1.5 text-[13px] font-500 mb-2 ${t.muted} hover:${t.text}`}
+                  >
+                    <Icon name="ArrowLeft" size={15} />
+                    Все сообщества
+                  </button>
+                )}
                 <h1 className={`text-[28px] font-700 tracking-tight ${t.text}`}>
-                  Найди свою гильдию
+                  {gameFilter ? `Сообщества · ${gameFilter}` : 'Найди свою гильдию'}
                 </h1>
                 <p className={`text-[15px] mt-1 ${t.muted}`}>
-                  Создавай сообщества, играй с друзьями и побеждай в турнирах
+                  {gameFilter
+                    ? 'Все сообщества по выбранной игре'
+                    : 'Создавай сообщества, играй с друзьями и побеждай в турнирах'}
                 </p>
               </div>
               <button className={`flex items-center gap-2 h-11 px-5 rounded-full font-500 text-[15px] ${t.activeBtn}`}>
@@ -261,27 +287,31 @@ const Index = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-7">
-              {[
-                { icon: 'Users', label: 'Сообществ', value: '1 248' },
-                { icon: 'Gamepad2', label: 'Игр', value: '326' },
-                { icon: 'Trophy', label: 'Турниров', value: '57' },
-                { icon: 'Zap', label: 'Онлайн', value: '24.1K' },
-              ].map((s) => (
-                <div key={s.label} className={`rounded-2xl border p-4 ${t.border}`}>
-                  <Icon name={s.icon} size={20} className={t.muted} />
-                  <div className={`text-[22px] font-700 mt-2 ${t.text}`}>{s.value}</div>
-                  <div className={`text-[13px] ${t.muted}`}>{s.label}</div>
-                </div>
-              ))}
-            </div>
+            {!gameFilter && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-7">
+                {[
+                  { icon: 'Users', label: 'Сообществ', value: '1 248' },
+                  { icon: 'Gamepad2', label: 'Игр', value: '326' },
+                  { icon: 'Trophy', label: 'Турниров', value: '57' },
+                  { icon: 'Zap', label: 'Онлайн', value: '24.1K' },
+                ].map((s) => (
+                  <div key={s.label} className={`rounded-2xl border p-4 ${t.border}`}>
+                    <Icon name={s.icon} size={20} className={t.muted} />
+                    <div className={`text-[22px] font-700 mt-2 ${t.text}`}>{s.value}</div>
+                    <div className={`text-[13px] ${t.muted}`}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Communities grid */}
             <h2 className={`text-[13px] tracking-[0.08em] font-500 mb-3 ${t.muted}`}>
-              ПОПУЛЯРНЫЕ СООБЩЕСТВА
+              {gameFilter ? 'НАЙДЕНО СООБЩЕСТВ' : 'ПОПУЛЯРНЫЕ СООБЩЕСТВА'}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {communities.map((c) => (
+              {communities
+                .filter((c) => !gameFilter || c.game === gameFilter)
+                .map((c) => (
                 <div
                   key={c.name}
                   onClick={() => setSelected(c)}
@@ -345,6 +375,7 @@ const Index = () => {
                 .map((g) => (
                   <div
                     key={g.name}
+                    onClick={() => openGame(g.name)}
                     className={`group rounded-2xl border overflow-hidden transition-all hover:-translate-y-1 cursor-pointer ${t.border}`}
                   >
                     {/* Cover */}
