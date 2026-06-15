@@ -160,6 +160,15 @@ const chats = [
   },
 ];
 
+const events = [
+  { day: '15', month: 'ИЮН', name: 'Стрим: разбор меты Dota 2', host: 'NeoStrike', time: '19:00', type: 'Стрим', members: 214, icon: 'Radio', color: 'from-red-500/30 to-orange-500/10' },
+  { day: '17', month: 'ИЮН', name: 'Открытый набор в Valorant Squad', host: 'PixelWolf', time: '20:30', type: 'Набор', members: 56, icon: 'UserPlus', color: 'from-pink-500/30 to-rose-500/10' },
+  { day: '21', month: 'ИЮН', name: 'Совместная стройка в Minecraft', host: 'Redstone Masters', time: '16:00', type: 'Ивент', members: 132, icon: 'Box', color: 'from-green-500/30 to-emerald-500/10' },
+  { day: '24', month: 'ИЮН', name: 'Winter Clash 2026 — финал', host: 'GuildHub', time: '18:00', type: 'Турнир', members: 1840, icon: 'Trophy', color: 'from-amber-500/30 to-yellow-500/10' },
+  { day: '28', month: 'ИЮН', name: 'Q&A с про-игроками CS2', host: 'Clutch Kings', time: '21:00', type: 'Встреча', members: 318, icon: 'MessageSquare', color: 'from-cyan-500/30 to-blue-500/10' },
+  { day: '02', month: 'ИЮЛ', name: 'Турнир Apex Predators', host: 'Apex Predators', time: '17:30', type: 'Турнир', members: 92, icon: 'Zap', color: 'from-orange-500/30 to-red-500/10' },
+];
+
 const Index = () => {
   const [active, setActive] = useState('Обзор');
   const [collapsed, setCollapsed] = useState(false);
@@ -650,6 +659,58 @@ const Index = () => {
                 </div>
               );
             })()}
+          </div>
+        ) : active === 'События' ? (
+          <div className="p-7">
+            {/* Header */}
+            <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
+              <div>
+                <h1 className={`text-[28px] font-700 tracking-tight ${t.text}`}>События</h1>
+                <p className={`text-[15px] mt-1 ${t.muted}`}>
+                  Стримы, ивенты и встречи сообществ — не пропусти ничего
+                </p>
+              </div>
+              <button className={`flex items-center gap-2 h-11 px-5 rounded-full font-500 text-[15px] ${t.activeBtn}`}>
+                <Icon name="CalendarPlus" size={18} />
+                Создать событие
+              </button>
+            </div>
+
+            {/* Events list */}
+            <div className="flex flex-col gap-3">
+              {events.map((e) => (
+                <div
+                  key={e.name}
+                  className={`group flex items-center gap-4 rounded-2xl border p-4 transition-all hover:-translate-y-0.5 ${t.border}`}
+                >
+                  {/* Date */}
+                  <div className={`w-14 h-14 rounded-xl shrink-0 bg-gradient-to-br ${e.color} flex flex-col items-center justify-center`}>
+                    <span className={`text-[20px] font-700 leading-none ${t.text}`}>{e.day}</span>
+                    <span className={`text-[10px] font-600 tracking-wider ${t.muted}`}>{e.month}</span>
+                  </div>
+
+                  {/* Info */}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <h3 className={`text-[16px] font-600 ${t.text}`}>{e.name}</h3>
+                      <span className={`flex items-center gap-1 text-[11px] font-500 px-2 py-0.5 rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
+                        <Icon name={e.icon} size={11} />
+                        {e.type}
+                      </span>
+                    </div>
+                    <div className={`flex items-center gap-4 text-[13px] mt-1 ${t.muted}`}>
+                      <span className="flex items-center gap-1.5"><Icon name="Clock" size={14} />{e.time}</span>
+                      <span className="flex items-center gap-1.5"><Icon name="User" size={14} />{e.host}</span>
+                      <span className="flex items-center gap-1.5"><Icon name="Users" size={14} />{e.members} идут</span>
+                    </div>
+                  </div>
+
+                  <button className={`shrink-0 h-10 px-5 rounded-full text-[14px] font-500 transition-colors border ${t.border} ${t.text} ${t.hover}`}>
+                    Участвовать
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="h-full flex items-center justify-center">
