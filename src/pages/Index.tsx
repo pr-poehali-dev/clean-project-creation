@@ -5,18 +5,27 @@ const AVATAR =
   'https://cdn.poehali.dev/projects/0b0686e1-0368-4333-82d7-e68c465aed2e/bucket/3e4aeea1-36ab-478f-bb7f-78e2fe00b6cc.jpg';
 
 const mainMenu = [
-  { icon: 'Pentagon', label: 'Обзор' },
-  { icon: 'Filter', label: 'Фильтры' },
-  { icon: 'Bookmark', label: 'Избранное' },
-  { icon: 'File', label: 'Отклики' },
-  { icon: 'Atom', label: 'Тесты навыков' },
-  { icon: 'GalleryThumbnails', label: 'Обучение', fallback: 'SquarePlus' },
+  { icon: 'LayoutGrid', label: 'Обзор' },
+  { icon: 'Users', label: 'Сообщества' },
+  { icon: 'Gamepad2', label: 'Игры' },
+  { icon: 'Trophy', label: 'Турниры' },
+  { icon: 'MessageSquare', label: 'Чаты' },
+  { icon: 'Calendar', label: 'События' },
 ];
 
 const others = [
-  { icon: 'CircleUserRound', label: 'Аккаунт' },
+  { icon: 'CircleUserRound', label: 'Профиль' },
   { icon: 'Bell', label: 'Уведомления' },
   { icon: 'Settings', label: 'Настройки' },
+];
+
+const communities = [
+  { name: 'Dota 2 Россия', members: '12.4K', tag: 'MOBA', online: 842, color: 'from-red-500/20 to-orange-500/10', icon: 'Swords' },
+  { name: 'Valorant Squad', members: '8.1K', tag: 'Шутер', online: 531, color: 'from-pink-500/20 to-rose-500/10', icon: 'Crosshair' },
+  { name: 'Minecraft Builders', members: '21.7K', tag: 'Песочница', online: 1203, color: 'from-green-500/20 to-emerald-500/10', icon: 'Box' },
+  { name: 'CS2 Pro League', members: '15.2K', tag: 'Шутер', online: 967, color: 'from-amber-500/20 to-yellow-500/10', icon: 'Target' },
+  { name: 'Cyberpunk Lore', members: '5.6K', tag: 'RPG', online: 214, color: 'from-cyan-500/20 to-blue-500/10', icon: 'Cpu' },
+  { name: 'Fortnite Builders', members: '18.9K', tag: 'Battle Royale', online: 1521, color: 'from-violet-500/20 to-purple-500/10', icon: 'Castle' },
 ];
 
 const Logo = ({ size = 26, dark }: { size?: number; dark?: boolean }) => (
@@ -62,7 +71,7 @@ const Index = () => {
           <div className="flex items-center gap-2.5">
             <Logo size={28} dark={dark} />
             {!collapsed && (
-              <span className={`text-[19px] font-600 tracking-tight ${t.text}`}>Travay</span>
+              <span className={`text-[19px] font-600 tracking-tight ${t.text}`}>GuildHub</span>
             )}
           </div>
           {!collapsed && (
@@ -194,12 +203,86 @@ const Index = () => {
 
       {/* MAIN AREA */}
       <main
-        className={`flex-1 h-full rounded-3xl border flex items-center justify-center transition-colors ${t.panel}`}
+        className={`flex-1 h-full rounded-3xl border transition-colors overflow-y-auto ${t.panel}`}
       >
-        <div className={`text-center ${t.muted}`}>
-          <Icon name="LayoutDashboard" size={40} className="mx-auto mb-3" />
-          <p className="text-[17px] font-500">{active}</p>
-        </div>
+        {active === 'Обзор' || active === 'Сообщества' ? (
+          <div className="p-7">
+            {/* Hero */}
+            <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
+              <div>
+                <h1 className={`text-[28px] font-700 tracking-tight ${t.text}`}>
+                  Найди свою гильдию
+                </h1>
+                <p className={`text-[15px] mt-1 ${t.muted}`}>
+                  Создавай сообщества, играй с друзьями и побеждай в турнирах
+                </p>
+              </div>
+              <button className={`flex items-center gap-2 h-11 px-5 rounded-full font-500 text-[15px] ${t.activeBtn}`}>
+                <Icon name="Plus" size={18} />
+                Создать сообщество
+              </button>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-7">
+              {[
+                { icon: 'Users', label: 'Сообществ', value: '1 248' },
+                { icon: 'Gamepad2', label: 'Игр', value: '326' },
+                { icon: 'Trophy', label: 'Турниров', value: '57' },
+                { icon: 'Zap', label: 'Онлайн', value: '24.1K' },
+              ].map((s) => (
+                <div key={s.label} className={`rounded-2xl border p-4 ${t.border}`}>
+                  <Icon name={s.icon} size={20} className={t.muted} />
+                  <div className={`text-[22px] font-700 mt-2 ${t.text}`}>{s.value}</div>
+                  <div className={`text-[13px] ${t.muted}`}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Communities grid */}
+            <h2 className={`text-[13px] tracking-[0.08em] font-500 mb-3 ${t.muted}`}>
+              ПОПУЛЯРНЫЕ СООБЩЕСТВА
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              {communities.map((c) => (
+                <div
+                  key={c.name}
+                  className={`group relative rounded-2xl border p-5 transition-all hover:-translate-y-1 cursor-pointer ${t.border} bg-gradient-to-br ${c.color}`}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${dark ? 'bg-white/10' : 'bg-black/[0.06]'}`}>
+                      <Icon name={c.icon} size={24} className={t.text} />
+                    </div>
+                    <span className={`text-[11px] font-500 px-2 py-1 rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
+                      {c.tag}
+                    </span>
+                  </div>
+                  <h3 className={`text-[17px] font-600 mb-1 ${t.text}`}>{c.name}</h3>
+                  <div className={`flex items-center gap-4 text-[13px] ${t.muted}`}>
+                    <span className="flex items-center gap-1.5">
+                      <Icon name="Users" size={14} />
+                      {c.members}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-green-500" />
+                      {c.online} онлайн
+                    </span>
+                  </div>
+                  <button className={`mt-4 w-full h-9 rounded-full text-[14px] font-500 transition-colors ${t.activeBtn} opacity-0 group-hover:opacity-100`}>
+                    Вступить
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="h-full flex items-center justify-center">
+            <div className={`text-center ${t.muted}`}>
+              <Icon name="Gamepad2" size={40} className="mx-auto mb-3" />
+              <p className="text-[17px] font-500">{active}</p>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
