@@ -616,10 +616,10 @@ const Index = () => {
             </aside>
           </div>
         ) : active === 'Сообщества' ? (
-          <div className="p-7">
-            {/* Hero */}
-            <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
-              <div>
+          <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-6 max-w-[1040px] mx-auto p-5 sm:p-7">
+            <div>
+              {/* Header */}
+              <div className="mb-5">
                 {gameFilter && (
                   <button
                     onClick={() => setGameFilter(null)}
@@ -629,77 +629,138 @@ const Index = () => {
                     Все сообщества
                   </button>
                 )}
-                <h1 className={`text-[28px] font-700 tracking-tight ${t.text}`}>
-                  {gameFilter ? `Сообщества · ${gameFilter}` : 'Найди свою гильдию'}
+                <h1 className={`text-[26px] font-700 tracking-tight ${t.text}`}>
+                  {gameFilter ? `Сообщества · ${gameFilter}` : 'Сообщества'}
                 </h1>
-                <p className={`text-[15px] mt-1 ${t.muted}`}>
+                <p className={`text-[14px] mt-0.5 ${t.muted}`}>
                   {gameFilter
                     ? 'Все сообщества по выбранной игре'
-                    : 'Создавай сообщества, играй с друзьями и побеждай в турнирах'}
+                    : 'Найди свою гильдию и играй с единомышленниками'}
                 </p>
               </div>
-              <button className={`flex items-center gap-2 h-11 px-5 rounded-full font-500 text-[15px] ${t.activeBtn}`}>
-                <Icon name="Plus" size={18} />
-                Создать сообщество
-              </button>
-            </div>
 
-            {/* Stats */}
-            {!gameFilter && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-7">
-                {[
-                  { icon: 'Users', label: 'Сообществ', value: '1 248' },
-                  { icon: 'Gamepad2', label: 'Игр', value: '326' },
-                  { icon: 'Trophy', label: 'Турниров', value: '57' },
-                  { icon: 'Zap', label: 'Онлайн', value: '24.1K' },
-                ].map((s) => (
-                  <div key={s.label} className={`rounded-2xl border p-4 ${t.border}`}>
-                    <Icon name={s.icon} size={20} className={t.muted} />
-                    <div className={`text-[22px] font-700 mt-2 ${t.text}`}>{s.value}</div>
-                    <div className={`text-[13px] ${t.muted}`}>{s.label}</div>
-                  </div>
+              {/* Create community bar */}
+              <div className={`flex items-center gap-3 rounded-2xl border p-3 mb-5 ${t.border}`}>
+                <div className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center ${t.activeBtn}`}>
+                  <Icon name="Plus" size={20} />
+                </div>
+                <span className={`text-[15px] flex-1 ${t.muted}`}>Создай своё сообщество</span>
+                <button className={`h-9 px-4 rounded-full text-[14px] font-500 ${t.activeBtn}`}>
+                  Создать
+                </button>
+              </div>
+
+              {/* Genre filter */}
+              <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
+                {genres.map((g) => (
+                  <button
+                    key={g}
+                    onClick={() => setGenre(g)}
+                    className={`h-9 px-4 rounded-full text-[14px] font-500 whitespace-nowrap transition-colors ${
+                      genre === g ? t.activeBtn : `border ${t.border} ${t.text} ${t.hover}`
+                    }`}
+                  >
+                    {g}
+                  </button>
                 ))}
               </div>
-            )}
 
-            {/* Communities grid */}
-            <h2 className={`text-[13px] tracking-[0.08em] font-500 mb-3 ${t.muted}`}>
-              {gameFilter ? 'НАЙДЕНО СООБЩЕСТВ' : 'ПОПУЛЯРНЫЕ СООБЩЕСТВА'}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {communities
-                .filter((c) => !gameFilter || c.game === gameFilter)
-                .map((c) => (
-                <div
-                  key={c.name}
-                  onClick={() => setSelected(c)}
-                  className={`group relative rounded-2xl border p-5 transition-all hover:-translate-y-1 cursor-pointer ${t.border} bg-gradient-to-br ${c.color}`}
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${dark ? 'bg-white/10' : 'bg-black/[0.06]'}`}>
-                      <Icon name={c.icon} size={24} className={t.text} />
-                    </div>
-                    <span className={`text-[11px] font-500 px-2 py-1 rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
-                      {c.tag}
-                    </span>
-                  </div>
-                  <h3 className={`text-[17px] font-600 mb-1 ${t.text}`}>{c.name}</h3>
-                  <div className={`flex items-center gap-4 text-[13px] ${t.muted}`}>
-                    <span className="flex items-center gap-1.5">
-                      <Icon name="Users" size={14} />
-                      {c.members}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-green-500" />
-                      {c.online} онлайн
-                    </span>
-                  </div>
-                  <button className={`mt-4 w-full h-9 rounded-full text-[14px] font-500 transition-colors ${t.activeBtn} opacity-0 group-hover:opacity-100`}>
-                    Открыть
-                  </button>
-                </div>
-              ))}
+              {/* Communities list */}
+              <div className="flex flex-col gap-4">
+                {communities
+                  .filter((c) => !gameFilter || c.game === gameFilter)
+                  .filter((c) => genre === 'Все' || c.tag === genre)
+                  .map((c) => (
+                    <article
+                      key={c.name}
+                      onClick={() => setSelected(c)}
+                      className={`group rounded-2xl border p-4 transition-all hover:-translate-y-0.5 cursor-pointer ${t.border}`}
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div className={`w-14 h-14 rounded-2xl shrink-0 bg-gradient-to-br ${c.color} flex items-center justify-center`}>
+                          <Icon name={c.icon} size={26} className={t.text} />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className={`text-[16px] font-600 ${t.text}`}>{c.name}</h3>
+                            <span className={`text-[11px] font-500 px-2 py-0.5 rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
+                              {c.tag}
+                            </span>
+                          </div>
+                          <div className={`flex items-center gap-4 text-[13px] mt-1 ${t.muted}`}>
+                            <span className="flex items-center gap-1.5">
+                              <Icon name="Users" size={14} />
+                              {c.members}
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                              <span className="w-2 h-2 rounded-full bg-green-500" />
+                              {c.online} онлайн
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                              <Icon name="Gamepad2" size={14} />
+                              {c.game}
+                            </span>
+                          </div>
+                        </div>
+                        <button className={`shrink-0 h-9 px-5 rounded-full text-[14px] font-500 transition-colors ${t.activeBtn}`}>
+                          Открыть
+                        </button>
+                      </div>
+                    </article>
+                  ))}
+              </div>
             </div>
+
+            {/* Right sidebar */}
+            <aside className="hidden xl:flex flex-col gap-4 sticky top-0 self-start">
+              {/* Stats */}
+              <div className={`rounded-2xl border p-4 ${t.border}`}>
+                <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>СТАТИСТИКА</h3>
+                <div className="flex flex-col gap-3">
+                  {[
+                    { icon: 'Users', label: 'Сообществ', value: '1 248' },
+                    { icon: 'Gamepad2', label: 'Игр', value: '326' },
+                    { icon: 'Trophy', label: 'Турниров', value: '57' },
+                    { icon: 'Zap', label: 'Сейчас онлайн', value: '24.1K' },
+                  ].map((s) => (
+                    <div key={s.label} className="flex items-center gap-2.5">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${dark ? 'bg-white/10' : 'bg-black/[0.06]'}`}>
+                        <Icon name={s.icon} size={16} className={t.text} />
+                      </div>
+                      <span className={`text-[13px] flex-1 ${t.muted}`}>{s.label}</span>
+                      <span className={`text-[15px] font-700 ${t.text}`}>{s.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Top games */}
+              <div className={`rounded-2xl border p-4 ${t.border}`}>
+                <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>ПОПУЛЯРНЫЕ ИГРЫ</h3>
+                <div className="flex flex-col gap-3">
+                  {games.slice(0, 4).map((g) => (
+                    <div
+                      key={g.name}
+                      onClick={() => openGame(g.name)}
+                      className="flex items-center gap-2.5 cursor-pointer"
+                    >
+                      <div className={`w-9 h-9 rounded-xl shrink-0 bg-gradient-to-br ${g.color} flex items-center justify-center`}>
+                        <Icon name={g.icon} size={17} className={t.text} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className={`text-[13px] font-600 truncate ${t.text}`}>{g.name}</div>
+                        <div className={`text-[11px] ${t.muted}`}>{g.communities} сообществ</div>
+                      </div>
+                      <Icon name="ChevronRight" size={16} className={t.muted} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className={`text-[11px] px-1 ${t.muted}`}>
+                GuildHub © 2026 · Платформа игровых сообществ
+              </p>
+            </aside>
           </div>
         ) : active === 'Игры' ? (
           <div className="p-7">
