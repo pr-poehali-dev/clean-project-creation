@@ -167,6 +167,20 @@ const feedTabs = [
   { key: 'news', label: 'Новости', icon: 'Newspaper' },
 ];
 
+const trends = [
+  { tag: '#Patch92', topic: 'Valorant', posts: '12.4K' },
+  { tag: '#WinterClash', topic: 'Турниры', posts: '8.1K' },
+  { tag: '#Dota2', topic: 'MOBA', posts: '24.7K' },
+  { tag: '#ClutchKings', topic: 'CS2', posts: '3.2K' },
+  { tag: '#VoiceRooms', topic: 'Новости', posts: '5.6K' },
+];
+
+const suggested = [
+  { name: 'Apex Predators', game: 'Apex Legends', members: '6.9K', icon: 'Zap', color: 'from-orange-500/30 to-red-500/10' },
+  { name: 'Summoner Rift', game: 'LoL', members: '11.3K', icon: 'Shield', color: 'from-blue-500/30 to-indigo-500/10' },
+  { name: 'Redstone Masters', game: 'Minecraft', members: '9.8K', icon: 'Box', color: 'from-green-500/30 to-lime-500/10' },
+];
+
 const feed = [
   {
     type: 'thread',
@@ -437,7 +451,8 @@ const Index = () => {
         className={`flex-1 h-full rounded-3xl border transition-colors overflow-y-auto ${t.panel}`}
       >
         {active === 'Обзор' ? (
-          <div className="max-w-[680px] mx-auto p-5 sm:p-7">
+          <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-6 max-w-[1040px] mx-auto p-5 sm:p-7">
+            <div>
             {/* Feed header */}
             <div className="mb-5">
               <h1 className={`text-[26px] font-700 tracking-tight ${t.text}`}>Лента</h1>
@@ -555,6 +570,50 @@ const Index = () => {
                 </article>
               ))}
             </div>
+            </div>
+
+            {/* Right sidebar */}
+            <aside className="hidden xl:flex flex-col gap-4 sticky top-0 self-start">
+              {/* Trends */}
+              <div className={`rounded-2xl border p-4 ${t.border}`}>
+                <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>В ТРЕНДЕ</h3>
+                <div className="flex flex-col gap-3">
+                  {trends.map((tr) => (
+                    <div key={tr.tag} className="cursor-pointer group">
+                      <div className={`text-[14px] font-600 group-hover:text-blue-500 transition-colors ${t.text}`}>
+                        {tr.tag}
+                      </div>
+                      <div className={`text-[12px] ${t.muted}`}>{tr.topic} · {tr.posts} постов</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Suggested communities */}
+              <div className={`rounded-2xl border p-4 ${t.border}`}>
+                <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>РЕКОМЕНДУЕМ</h3>
+                <div className="flex flex-col gap-3">
+                  {suggested.map((s) => (
+                    <div key={s.name} className="flex items-center gap-2.5">
+                      <div className={`w-9 h-9 rounded-xl shrink-0 bg-gradient-to-br ${s.color} flex items-center justify-center`}>
+                        <Icon name={s.icon} size={17} className={t.text} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className={`text-[13px] font-600 truncate ${t.text}`}>{s.name}</div>
+                        <div className={`text-[11px] ${t.muted}`}>{s.game} · {s.members}</div>
+                      </div>
+                      <button className={`shrink-0 h-7 px-3 rounded-full text-[12px] font-500 ${t.activeBtn}`}>
+                        +
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className={`text-[11px] px-1 ${t.muted}`}>
+                GuildHub © 2026 · Платформа игровых сообществ
+              </p>
+            </aside>
           </div>
         ) : active === 'Сообщества' ? (
           <div className="p-7">
