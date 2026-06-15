@@ -39,10 +39,33 @@ const Logo = ({ size = 26, dark }: { size?: number; dark?: boolean }) => (
   </div>
 );
 
+type Community = (typeof communities)[number];
+
+const posts = [
+  { author: 'NeoStrike', time: '12 мин', text: 'Кто в пати на вечерний рейтинг? Ищу двоих на мид и саппорт 🎮', likes: 24, comments: 8 },
+  { author: 'LunaQueen', time: '1 ч', text: 'Залил гайд по новому патчу — разобрал мету и топ героев. Ссылка в закрепе!', likes: 156, comments: 42 },
+  { author: 'GhostByte', time: '3 ч', text: 'Турнир в эту субботу, призовой фонд 50 000 ₽. Регистрация открыта 🏆', likes: 312, comments: 97 },
+];
+
+const onlineMembers = [
+  { name: 'NeoStrike', role: 'Лидер' },
+  { name: 'LunaQueen', role: 'Модератор' },
+  { name: 'GhostByte', role: 'Игрок' },
+  { name: 'PixelWolf', role: 'Игрок' },
+  { name: 'DarkRaven', role: 'Игрок' },
+];
+
+const chatMessages = [
+  { name: 'PixelWolf', text: 'Го катку?' },
+  { name: 'NeoStrike', text: 'Я в деле, через 5 минут' },
+  { name: 'LunaQueen', text: 'Тоже залетаю 🔥' },
+];
+
 const Index = () => {
   const [active, setActive] = useState('Обзор');
   const [collapsed, setCollapsed] = useState(false);
   const [dark, setDark] = useState(false);
+  const [selected, setSelected] = useState<Community | null>(null);
 
   const t = {
     page: dark ? 'bg-[#161616]' : 'bg-[#f3f3f3]',
@@ -247,6 +270,7 @@ const Index = () => {
               {communities.map((c) => (
                 <div
                   key={c.name}
+                  onClick={() => setSelected(c)}
                   className={`group relative rounded-2xl border p-5 transition-all hover:-translate-y-1 cursor-pointer ${t.border} bg-gradient-to-br ${c.color}`}
                 >
                   <div className="flex items-start justify-between mb-4">
@@ -269,7 +293,7 @@ const Index = () => {
                     </span>
                   </div>
                   <button className={`mt-4 w-full h-9 rounded-full text-[14px] font-500 transition-colors ${t.activeBtn} opacity-0 group-hover:opacity-100`}>
-                    Вступить
+                    Открыть
                   </button>
                 </div>
               ))}
@@ -284,6 +308,112 @@ const Index = () => {
           </div>
         )}
       </main>
+
+      {/* COMMUNITY DETAIL OVERLAY */}
+      {selected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 animate-fade-in">
+          <div
+            className={`relative w-full max-w-5xl h-[88vh] rounded-3xl border overflow-hidden flex flex-col ${t.panel} animate-scale-in`}
+          >
+            {/* Banner */}
+            <div className={`relative h-32 bg-gradient-to-br ${selected.color} shrink-0`}>
+              <button
+                onClick={() => setSelected(null)}
+                className={`absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center ${dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'} hover:scale-105 transition-transform`}
+              >
+                <Icon name="X" size={18} />
+              </button>
+              <div className="absolute -bottom-7 left-7 flex items-end gap-4">
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center border-4 ${dark ? 'bg-[#1f1f1f] border-[#1f1f1f]' : 'bg-white border-white'}`}>
+                  <Icon name={selected.icon} size={30} className={t.text} />
+                </div>
+              </div>
+            </div>
+
+            {/* Header info */}
+            <div className="pt-10 px-7 pb-4 flex items-center justify-between flex-wrap gap-3 shrink-0">
+              <div>
+                <h2 className={`text-[22px] font-700 ${t.text}`}>{selected.name}</h2>
+                <div className={`flex items-center gap-4 text-[13px] mt-0.5 ${t.muted}`}>
+                  <span>{selected.tag}</span>
+                  <span className="flex items-center gap-1.5"><Icon name="Users" size={14} />{selected.members}</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-500" />{selected.online} онлайн</span>
+                </div>
+              </div>
+              <button className={`flex items-center gap-2 h-10 px-5 rounded-full font-500 text-[14px] ${t.activeBtn}`}>
+                <Icon name="UserPlus" size={16} />
+                Вступить
+              </button>
+            </div>
+
+            {/* Body: feed + sidebar */}
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-5 px-7 pb-7 overflow-hidden">
+              {/* Feed */}
+              <div className="overflow-y-auto pr-1 space-y-4">
+                {posts.map((p, i) => (
+                  <div key={i} className={`rounded-2xl border p-4 ${t.border}`}>
+                    <div className="flex items-center gap-2.5 mb-2.5">
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-600 ${t.activeBtn}`}>
+                        {p.author[0]}
+                      </div>
+                      <div>
+                        <div className={`text-[14px] font-600 ${t.text}`}>{p.author}</div>
+                        <div className={`text-[12px] ${t.muted}`}>{p.time} назад</div>
+                      </div>
+                    </div>
+                    <p className={`text-[14px] leading-relaxed mb-3 ${t.text}`}>{p.text}</p>
+                    <div className={`flex items-center gap-5 text-[13px] ${t.muted}`}>
+                      <span className="flex items-center gap-1.5 cursor-pointer hover:text-red-500 transition-colors"><Icon name="Heart" size={15} />{p.likes}</span>
+                      <span className="flex items-center gap-1.5 cursor-pointer"><Icon name="MessageCircle" size={15} />{p.comments}</span>
+                      <span className="flex items-center gap-1.5 cursor-pointer ml-auto"><Icon name="Share2" size={15} /></span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Right sidebar: members + chat */}
+              <div className="hidden lg:flex flex-col gap-4 overflow-hidden">
+                <div className={`rounded-2xl border p-4 ${t.border}`}>
+                  <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>УЧАСТНИКИ ОНЛАЙН</h3>
+                  <div className="space-y-2.5">
+                    {onlineMembers.map((m) => (
+                      <div key={m.name} className="flex items-center gap-2.5">
+                        <div className="relative">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-600 ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
+                            {m.name[0]}
+                          </div>
+                          <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 border-2 ${dark ? 'border-[#1f1f1f]' : 'border-white'}`} />
+                        </div>
+                        <div className="leading-tight">
+                          <div className={`text-[13px] font-500 ${t.text}`}>{m.name}</div>
+                          <div className={`text-[11px] ${t.muted}`}>{m.role}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={`rounded-2xl border p-4 flex-1 flex flex-col overflow-hidden ${t.border}`}>
+                  <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>ОБЩИЙ ЧАТ</h3>
+                  <div className="flex-1 overflow-y-auto space-y-2.5">
+                    {chatMessages.map((m, i) => (
+                      <div key={i}>
+                        <span className={`text-[12px] font-600 ${t.text}`}>{m.name}: </span>
+                        <span className={`text-[13px] ${t.muted}`}>{m.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className={`mt-3 flex items-center gap-2 h-10 px-3 rounded-full border ${t.border}`}>
+                    <Icon name="Smile" size={16} className={t.muted} />
+                    <span className={`text-[13px] ${t.muted}`}>Написать...</span>
+                    <Icon name="Send" size={15} className={`${t.muted} ml-auto`} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
