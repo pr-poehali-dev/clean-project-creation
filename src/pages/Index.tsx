@@ -160,6 +160,87 @@ const chats = [
   },
 ];
 
+const feed = [
+  {
+    type: 'thread',
+    author: 'LunaQueen',
+    handle: '@lunaqueen',
+    badge: 'Valorant',
+    time: '12 мин',
+    text: 'Разобрала новый патч 9.2 — баланс агентов наконец-то завезли. Джетт всё ещё топ, но саппорты теперь реально решают. Кто уже катал на новой мете? Делитесь впечатлениями 👇',
+    likes: 342,
+    comments: 87,
+    reposts: 24,
+    color: 'from-pink-500/30 to-rose-500/10',
+  },
+  {
+    type: 'video',
+    author: 'NeoStrike',
+    handle: '@neostrike',
+    badge: 'Dota 2',
+    time: '1 ч',
+    title: 'ТОП-10 камбэков сезона — невозможные победы',
+    thumb: 'https://cdn.poehali.dev/projects/0b0686e1-0368-4333-82d7-e68c465aed2e/files/e66f600d-7074-44a3-9787-f03f026a7a36.jpg',
+    duration: '14:32',
+    views: '124K',
+    likes: 5800,
+    comments: 412,
+    reposts: 96,
+    color: 'from-red-500/30 to-orange-500/10',
+  },
+  {
+    type: 'news',
+    author: 'GuildHub',
+    handle: '@guildhub',
+    badge: 'Новости',
+    time: '2 ч',
+    text: 'Winter Clash 2026 стартует 24 июня. Призовой фонд увеличен до 500 000 ₽! 🏆',
+    likes: 891,
+    comments: 156,
+    reposts: 203,
+    color: 'from-amber-500/30 to-yellow-500/10',
+  },
+  {
+    type: 'video',
+    author: 'PixelWolf',
+    handle: '@pixelwolf',
+    badge: 'Valorant',
+    time: '4 ч',
+    title: 'Гайд: как подняться с Серебра до Платины за неделю',
+    thumb: 'https://cdn.poehali.dev/projects/0b0686e1-0368-4333-82d7-e68c465aed2e/files/576848ed-9a12-4bff-aedc-3207bf3c31fe.jpg',
+    duration: '22:08',
+    views: '67K',
+    likes: 3100,
+    comments: 248,
+    reposts: 54,
+    color: 'from-violet-500/30 to-purple-500/10',
+  },
+  {
+    type: 'thread',
+    author: 'GhostByte',
+    handle: '@ghostbyte',
+    badge: 'CS2',
+    time: '6 ч',
+    text: 'Собираю команду на Major Arena. Нужен опытный AWPer и саппорт. Тренировки по вечерам, цель — топ-8. Пишите в личку, проведём пробные катки 🎯',
+    likes: 178,
+    comments: 64,
+    reposts: 19,
+    color: 'from-cyan-500/30 to-blue-500/10',
+  },
+  {
+    type: 'news',
+    author: 'GuildHub',
+    handle: '@guildhub',
+    badge: 'Новости',
+    time: '8 ч',
+    text: 'В платформу добавили голосовые комнаты для сообществ. Теперь можно собираться на катки прямо в чате 🎙️',
+    likes: 624,
+    comments: 98,
+    reposts: 112,
+    color: 'from-green-500/30 to-emerald-500/10',
+  },
+];
+
 const events = [
   { day: '15', month: 'ИЮН', name: 'Стрим: разбор меты Dota 2', host: 'NeoStrike', time: '19:00', type: 'Стрим', members: 214, icon: 'Radio', color: 'from-red-500/30 to-orange-500/10' },
   { day: '17', month: 'ИЮН', name: 'Открытый набор в Valorant Squad', host: 'PixelWolf', time: '20:30', type: 'Набор', members: 56, icon: 'UserPlus', color: 'from-pink-500/30 to-rose-500/10' },
@@ -347,7 +428,109 @@ const Index = () => {
       <main
         className={`flex-1 h-full rounded-3xl border transition-colors overflow-y-auto ${t.panel}`}
       >
-        {active === 'Обзор' || active === 'Сообщества' ? (
+        {active === 'Обзор' ? (
+          <div className="max-w-[680px] mx-auto p-5 sm:p-7">
+            {/* Feed header */}
+            <div className="mb-5">
+              <h1 className={`text-[26px] font-700 tracking-tight ${t.text}`}>Лента</h1>
+              <p className={`text-[14px] mt-0.5 ${t.muted}`}>
+                Новости, видео и обсуждения игрового мира
+              </p>
+            </div>
+
+            {/* Composer */}
+            <div className={`flex items-center gap-3 rounded-2xl border p-3 mb-5 ${t.border}`}>
+              <img src={AVATAR} alt="" className="w-10 h-10 rounded-full object-cover shrink-0" />
+              <span className={`text-[15px] flex-1 ${t.muted}`}>Что нового в игре?</span>
+              <div className={`flex items-center gap-2 ${t.muted}`}>
+                <Icon name="Image" size={19} />
+                <Icon name="Video" size={19} />
+              </div>
+              <button className={`h-9 px-4 rounded-full text-[14px] font-500 ${t.activeBtn}`}>
+                Опубликовать
+              </button>
+            </div>
+
+            {/* Feed */}
+            <div className="flex flex-col gap-4">
+              {feed.map((p, i) => (
+                <article key={i} className={`rounded-2xl border p-4 ${t.border}`}>
+                  {/* Author */}
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${p.color} flex items-center justify-center text-[15px] font-700 ${t.text}`}>
+                      {p.author[0]}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className={`text-[14px] font-600 ${t.text}`}>{p.author}</span>
+                        <Icon name="BadgeCheck" size={14} className="text-blue-500" />
+                        <span className={`text-[13px] ${t.muted}`}>{p.handle} · {p.time}</span>
+                      </div>
+                      <span className={`text-[11px] font-500 px-2 py-0.5 rounded-full inline-block mt-0.5 ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
+                        {p.badge}
+                      </span>
+                    </div>
+                    <Icon name="MoreHorizontal" size={18} className={`ml-auto ${t.muted}`} />
+                  </div>
+
+                  {/* Content */}
+                  {p.type === 'video' ? (
+                    <>
+                      <p className={`text-[15px] font-600 mb-2.5 ${t.text}`}>{p.title}</p>
+                      <div className="relative rounded-xl overflow-hidden mb-3 group cursor-pointer">
+                        <img src={p.thumb} alt={p.title} className="w-full aspect-video object-cover" />
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                          <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <Icon name="Play" size={24} className="text-black ml-0.5" />
+                          </div>
+                        </div>
+                        <span className="absolute bottom-2 right-2 text-[12px] font-500 px-1.5 py-0.5 rounded bg-black/70 text-white">
+                          {p.duration}
+                        </span>
+                      </div>
+                      <div className={`text-[13px] mb-3 ${t.muted}`}>
+                        <Icon name="Eye" size={14} className="inline mr-1" />
+                        {p.views} просмотров
+                      </div>
+                    </>
+                  ) : (
+                    <p
+                      className={`mb-3 leading-relaxed ${
+                        p.type === 'news'
+                          ? `text-[16px] font-500 ${t.text}`
+                          : `text-[15px] ${t.text}`
+                      }`}
+                    >
+                      {p.text}
+                    </p>
+                  )}
+
+                  {/* Actions */}
+                  <div className={`flex items-center gap-6 text-[13px] ${t.muted}`}>
+                    <button className="flex items-center gap-1.5 hover:text-red-500 transition-colors">
+                      <Icon name="Heart" size={17} />
+                      {p.likes > 999 ? `${(p.likes / 1000).toFixed(1)}K` : p.likes}
+                    </button>
+                    <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors">
+                      <Icon name="MessageCircle" size={17} />
+                      {p.comments}
+                    </button>
+                    <button className="flex items-center gap-1.5 hover:text-green-500 transition-colors">
+                      <Icon name="Repeat2" size={17} />
+                      {p.reposts}
+                    </button>
+                    <button className="ml-auto hover:opacity-70 transition-opacity">
+                      <Icon name="Bookmark" size={17} />
+                    </button>
+                    <button className="hover:opacity-70 transition-opacity">
+                      <Icon name="Share2" size={17} />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        ) : active === 'Сообщества' ? (
           <div className="p-7">
             {/* Hero */}
             <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
