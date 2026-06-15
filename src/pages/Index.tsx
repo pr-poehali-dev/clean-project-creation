@@ -31,9 +31,14 @@ const Logo = ({ size = 26 }: { size?: number }) => (
 const Index = () => {
   const [active, setActive] = useState('Обзор');
   const [collapsed, setCollapsed] = useState(false);
+  const [dark, setDark] = useState(false);
 
   return (
-    <div className="h-screen bg-[#f3f3f3] flex p-4 gap-4 overflow-hidden">
+    <div
+      className={`h-screen flex p-4 gap-4 overflow-hidden transition-colors ${
+        dark ? 'bg-[#161616]' : 'bg-[#f3f3f3]'
+      }`}
+    >
       {/* SIDEBAR */}
       <aside
         className={`relative h-full bg-white rounded-3xl border border-black/5 shadow-[0_2px_24px_rgba(0,0,0,0.04)] flex flex-col py-4 transition-[width] duration-300 ease-in-out ${
@@ -53,6 +58,13 @@ const Index = () => {
           {!collapsed && (
             <div className="flex items-center gap-3 text-[#9a9a9a]">
               <Icon name="CircleHelp" size={18} />
+              <button
+                onClick={() => setDark((v) => !v)}
+                title="Сменить тему"
+                className="hover:text-[#1a1a1a] transition-colors"
+              >
+                <Icon name={dark ? 'Sun' : 'Moon'} size={18} />
+              </button>
               <button
                 onClick={() => setCollapsed(true)}
                 title="Свернуть"
