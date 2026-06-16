@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GuildHub — Каталог игр</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --bg: #0b0b0c;
+    --panel: #141416;
+    --border: rgba(255,255,255,0.08);
+    --text: #f2f2f3;
+    --muted: #8a8a8f;
+    --accent: #ffffff;
+    --amber: #f59e0b;
+    --green: #22c55e;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --gray: #9ca3af;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  /* Header */
+  header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 28px;
+  }
+  .logo {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: #fff; color: #111;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brand { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .nav { margin-left: auto; display: flex; gap: 6px; }
+  .nav a {
+    font-size: 14px; color: var(--muted); text-decoration: none;
+    padding: 8px 14px; border-radius: 999px; transition: .2s;
+  }
+  .nav a:hover { color: var(--text); background: rgba(255,255,255,.05); }
+  .nav a.active { color: var(--text); background: rgba(255,255,255,.08); }
+
+  h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+  .sub { font-size: 14px; color: var(--muted); margin-top: 2px; margin-bottom: 20px; }
+
+  /* Filters */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .chip {
+    font-size: 13px; font-weight: 500; padding: 8px 14px;
+    border-radius: 999px; border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer; transition: .2s;
+  }
+  .chip:hover { color: var(--text); }
+  .chip.active { background: #fff; color: #111; border-color: #fff; }
+
+  /* Game grid */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .card {
+    border: 1px solid var(--border); border-radius: 20px;
+    background: var(--panel); overflow: hidden; transition: .2s;
+  }
+  .card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.18); }
+  .banner {
+    height: 130px; display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .b-red { background: linear-gradient(135deg, rgba(239,68,68,.35), rgba(249,115,22,.12)); }
+  .b-pink { background: linear-gradient(135deg, rgba(236,72,153,.35), rgba(244,63,94,.12)); }
+  .b-green { background: linear-gradient(135deg, rgba(34,197,94,.35), rgba(16,185,129,.12)); }
+  .b-amber { background: linear-gradient(135deg, rgba(245,158,11,.35), rgba(234,179,8,.12)); }
+  .b-blue { background: linear-gradient(135deg, rgba(59,130,246,.35), rgba(99,102,241,.12)); }
+  .b-violet { background: linear-gradient(135deg, rgba(139,92,246,.35), rgba(168,85,247,.12)); }
+  .b-cyan { background: linear-gradient(135deg, rgba(6,182,212,.35), rgba(59,130,246,.12)); }
+  .b-orange { background: linear-gradient(135deg, rgba(249,115,22,.35), rgba(239,68,68,.12)); }
+  .banner i { color: #fff; }
+  .low {
+    position: absolute; bottom: 12px; left: 14px;
+    font-size: 11px; font-weight: 600; padding: 4px 10px;
+    border-radius: 999px; background: rgba(59,130,246,.9); color: #fff;
+  }
+  .card-body { padding: 16px; }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .card h3 { font-size: 16px; font-weight: 600; }
+  .tag { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .rating { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: var(--amber); white-space: nowrap; }
+  .desc { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 10px 0 14px; }
+  .card-foot { display: flex; align-items: center; justify-content: space-between; }
+  .price { font-size: 17px; font-weight: 700; }
+  .free { color: var(--green); }
+  .disc { font-size: 11px; font-weight: 600; background: rgba(34,197,94,.15); color: var(--green); padding: 3px 8px; border-radius: 999px; margin-left: 8px; }
+  .play { font-size: 13px; font-weight: 500; background: #fff; color: #111; border: none; padding: 8px 16px; border-radius: 999px; cursor: pointer; }
+
+  /* Achievements wiki */
+  .section { margin-top: 40px; }
+  .sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .sec-head h2 { font-size: 13px; letter-spacing: .06em; font-weight: 500; color: var(--muted); }
+  .sec-meta { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+  .sec-note { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .ach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 10px; }
+  .ach {
+    border: 1px solid var(--border); border-radius: 16px; padding: 14px;
+    display: flex; gap: 12px; align-items: flex-start; background: var(--panel);
+  }
+  .ach-ico {
+    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(245,158,11,.2); color: var(--amber);
+  }
+  .ach-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .ach-title span.t { font-size: 14px; font-weight: 600; }
+  .badge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; }
+  .r-common { background: rgba(156,163,175,.15); color: var(--gray); }
+  .r-rare { background: rgba(59,130,246,.15); color: #60a5fa; }
+  .r-epic { background: rgba(168,85,247,.15); color: #c084fc; }
+  .r-legend { background: rgba(245,158,11,.15); color: #fbbf24; }
+  .ach p { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 4px 0; }
+  .ach-stats { display: flex; gap: 14px; font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .ach-stats span { display: flex; align-items: center; gap: 4px; }
+
+  footer { margin-top: 50px; font-size: 11px; color: var(--muted); }
+
+  @media (max-width: 640px) {
+    .nav { display: none; }
+    .grid, .ach-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><i data-lucide="spline" width="18"></i></div>
+    <span class="brand">GuildHub</span>
+    <nav class="nav">
+      <a href="#">Обзор</a>
+      <a href="#">Сообщества</a>
+      <a href="#" class="active">Игры</a>
+      <a href="#">Турниры</a>
+      <a href="#">Чаты</a>
+    </nav>
+  </header>
+
+  <h1>Каталог игр</h1>
+  <p class="sub">Лучшие скидки и рейтинги — выбери игру и найди сообщества</p>
+
+  <div class="filters">
+    <span class="chip active">Все</span>
+    <span class="chip">MOBA</span>
+    <span class="chip">Шутер</span>
+    <span class="chip">Battle Royale</span>
+    <span class="chip">RPG</span>
+    <span class="chip">Песочница</span>
+  </div>
+
+  <div class="grid">
+    <!-- Dota 2 -->
+    <div class="card">
+      <div class="banner b-red"><i data-lucide="swords" width="54" height="54"></i><span class="low">Исторический минимум</span></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div><h3>Dota 2</h3><div class="tag">MOBA · 11.2M игроков</div></div>
+          <div class="rating"><i data-lucide="star" width="14" fill="currentColor"></i>4.7</div>
+        </div>
+        <p class="desc">Легендарная командная MOBA 5 на 5: выбирай героя из сотни уникальных и веди свою команду к победе на аренах киберспорта.</p>
+        <div class="card-foot"><div><span class="price free">Бесплатно</span><span class="disc">-100%</span></div><button class="play">Играть</button></div>
+      </div>
+    </div>
+
+    <!-- Valorant -->
+    <div class="card">
+      <div class="banner b-pink"><i data-lucide="crosshair" width="54" height="54"></i></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div><h3>Valorant</h3><div class="tag">Шутер · 8.4M игроков</div></div>
+          <div class="rating"><i data-lucide="star" width="14" fill="currentColor"></i>4.6</div>
+        </div>
+        <p class="desc">Тактический шутер 5 на 5, где точная стрельба сочетается с уникальными способностями агентов. Каждый раунд — это шахматы на скорости.</p>
+        <div class="card-foot"><div><span class="price">499 ₽</span><span class="disc">-50%</span></div><button class="play">Купить</button></div>
+      </div>
+    </div>
+
+    <!-- Minecraft -->
+    <div class="card">
+      <div class="banner b-green"><i data-lucide="box" width="54" height="54"></i></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div><h3>Minecraft</h3><div class="tag">Песочница · 21.7M игроков</div></div>
+          <div class="rating"><i data-lucide="star" width="14" fill="currentColor"></i>4.9</div>
+        </div>
+        <p class="desc">Бесконечный мир из блоков, где ты строишь, исследуешь и выживаешь. Твоё воображение — единственный предел.</p>
+        <div class="card-foot"><div><span class="price">1199 ₽</span><span class="disc">-20%</span></div><button class="play">Купить</button></div>
+      </div>
+    </div>
+
+    <!-- CS2 -->
+    <div class="card">
+      <div class="banner b-amber"><i data-lucide="target" width="54" height="54"></i><span class="low">Исторический минимум</span></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div><h3>Counter-Strike 2</h3><div class="tag">Шутер · 15.2M игроков</div></div>
+          <div class="rating"><i data-lucide="star" width="14" fill="currentColor"></i>4.8</div>
+        </div>
+        <p class="desc">Культовый тактический шутер нового поколения на движке Source 2. Командная игра, точность и реакция решают всё.</p>
+        <div class="card-foot"><div><span class="price free">Бесплатно</span><span class="disc">-75%</span></div><button class="play">Играть</button></div>
+      </div>
+    </div>
+
+    <!-- LoL -->
+    <div class="card">
+      <div class="banner b-blue"><i data-lucide="shield" width="54" height="54"></i></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div><h3>League of Legends</h3><div class="tag">MOBA · 13.5M игроков</div></div>
+          <div class="rating"><i data-lucide="star" width="14" fill="currentColor"></i>4.5</div>
+        </div>
+        <p class="desc">Самая популярная MOBA в мире: более 160 чемпионов, глубокая стратегия и крупнейшая киберспортивная сцена.</p>
+        <div class="card-foot"><div><span class="price">844 ₽</span><span class="disc">-35%</span></div><button class="play">Купить</button></div>
+      </div>
+    </div>
+
+    <!-- Fortnite -->
+    <div class="card">
+      <div class="banner b-violet"><i data-lucide="castle" width="54" height="54"></i><span class="low">Исторический минимум</span></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div><h3>Fortnite</h3><div class="tag">Battle Royale · 18.9M игроков</div></div>
+          <div class="rating"><i data-lucide="star" width="14" fill="currentColor"></i>4.4</div>
+        </div>
+        <p class="desc">Королевская битва на 100 игроков с уникальной механикой строительства. Сражайся, строй и оставайся последним на острове.</p>
+        <div class="card-foot"><div><span class="price">599 ₽</span><span class="disc">-30%</span></div><button class="play">Купить</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievements wiki for Dota 2 -->
+  <div class="section">
+    <div class="sec-head">
+      <h2>ДОСТИЖЕНИЯ В ИГРЕ — DOTA 2</h2>
+      <span class="sec-meta"><i data-lucide="award" width="14" style="color:var(--amber)"></i>6 наград · 245 очков</span>
+    </div>
+    <p class="sec-note">Справочник всех достижений игры с описанием и редкостью</p>
+    <div class="ach-grid">
+
+      <div class="ach">
+        <div class="ach-ico"><i data-lucide="swords" width="20"></i></div>
+        <div>
+          <div class="ach-title"><span class="t">Первая кровь</span><span class="badge r-common">Обычное</span></div>
+          <p>Совершите первое убийство героя в матче. Даёт команде бонусное золото и задаёт тон началу игры.</p>
+          <div class="ach-stats"><span><i data-lucide="star" width="12" style="color:#fbbf24"></i>10 очков</span><span><i data-lucide="users" width="12"></i>78% получили</span></div>
+        </div>
+      </div>
+
+      <div class="ach">
+        <div class="ach-ico"><i data-lucide="crown" width="20"></i></div>
+        <div>
+          <div class="ach-title"><span class="t">Рампага</span><span class="badge r-epic">Эпическое</span></div>
+          <p>Убейте 5 вражеских героев подряд, не погибнув. Высшая серия убийств, которую объявляет диктор.</p>
+          <div class="ach-stats"><span><i data-lucide="star" width="12" style="color:#fbbf24"></i>50 очков</span><span><i data-lucide="users" width="12"></i>6% получили</span></div>
+        </div>
+      </div>
+
+      <div class="ach">
+        <div class="ach-ico"><i data-lucide="castle" width="20"></i></div>
+        <div>
+          <div class="ach-title"><span class="t">Разрушитель трона</span><span class="badge r-common">Обычное</span></div>
+          <p>Уничтожьте Древний (трон) вражеской команды и завершите матч победой.</p>
+          <div class="ach-stats"><span><i data-lucide="star" width="12" style="color:#fbbf24"></i>15 очков</span><span><i data-lucide="users" width="12"></i>64% получили</span></div>
+        </div>
+      </div>
+
+      <div class="ach">
+        <div class="ach-ico"><i data-lucide="coins" width="20"></i></div>
+        <div>
+          <div class="ach-title"><span class="t">Богатей Радианта</span><span class="badge r-rare">Редкое</span></div>
+          <p>Накопите 25 000 золота за один матч. Требует отличного фарма и контроля карты.</p>
+          <div class="ach-stats"><span><i data-lucide="star" width="12" style="color:#fbbf24"></i>30 очков</span><span><i data-lucide="users" width="12"></i>21% получили</span></div>
+        </div>
+      </div>
+
+      <div class="ach">
+        <div class="ach-ico"><i data-lucide="trophy" width="20"></i></div>
+        <div>
+          <div class="ach-title"><span class="t">Обладатель Арканы</span><span class="badge r-legend">Легендарное</span></div>
+          <p>Получите легендарный скин Аркана для любого героя. Меняет анимации и эффекты.</p>
+          <div class="ach-stats"><span><i data-lucide="star" width="12" style="color:#fbbf24"></i>100 очков</span><span><i data-lucide="users" width="12"></i>2% получили</span></div>
+        </div>
+      </div>
+
+      <div class="ach">
+        <div class="ach-ico"><i data-lucide="zap" width="20"></i></div>
+        <div>
+          <div class="ach-title"><span class="t">Имба-победа</span><span class="badge r-rare">Редкое</span></div>
+          <p>Выиграйте матч менее чем за 20 минут. Полное доминирование над противником.</p>
+          <div class="ach-stats"><span><i data-lucide="star" width="12" style="color:#fbbf24"></i>40 очков</span><span><i data-lucide="users" width="12"></i>12% получили</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>GuildHub © 2026 · Платформа игровых сообществ</footer>
+</div>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>
