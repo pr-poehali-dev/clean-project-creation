@@ -46,6 +46,7 @@ const Logo = ({ size = 26, dark }: { size?: number; dark?: boolean }) => (
 );
 
 type Community = (typeof communities)[number];
+type Game = (typeof games)[number];
 
 const posts = [
   { author: 'NeoStrike', time: '12 мин', text: 'Кто в пати на вечерний рейтинг? Ищу двоих на мид и саппорт 🎮', likes: 24, comments: 8 },
@@ -282,6 +283,7 @@ const Index = () => {
   const [feedTab, setFeedTab] = useState('all');
   const [sortBy, setSortBy] = useState<{ key: string; dir: 'asc' | 'desc' }>({ key: 'discount', dir: 'asc' });
   const [gameSearch, setGameSearch] = useState('');
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
 
   const toggleSort = (key: string) => {
     setSortBy((s) =>
@@ -876,7 +878,7 @@ const Index = () => {
               {sortGames(filteredGames).map((g) => (
                   <div
                     key={g.name}
-                    onClick={() => openGame(g.name)}
+                    onClick={() => setSelectedGame(g)}
                     className={`grid grid-cols-[1fr_auto] md:grid-cols-[1fr_90px_90px_90px_110px] items-center gap-3 px-4 py-2.5 cursor-pointer border-t ${t.border} ${t.hover} transition-colors`}
                   >
                     {/* Cover + name */}
@@ -1357,6 +1359,95 @@ const Index = () => {
                     <Icon name="Send" size={15} className={`${t.muted} ml-auto`} />
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* GAME DETAIL OVERLAY */}
+      {selectedGame && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 animate-fade-in"
+          onClick={() => setSelectedGame(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={`relative w-full max-w-2xl max-h-[88vh] rounded-3xl border overflow-hidden flex flex-col ${t.panel} animate-scale-in`}
+          >
+            {/* Banner */}
+            <div className={`relative h-36 bg-gradient-to-br ${selectedGame.color} shrink-0 flex items-center justify-center`}>
+              <Icon name={selectedGame.icon} size={56} className={t.text} />
+              <button
+                onClick={() => setSelectedGame(null)}
+                className={`absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center ${dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'} hover:scale-105 transition-transform`}
+              >
+                <Icon name="X" size={18} />
+              </button>
+              {selectedGame.low && (
+                <span className="absolute bottom-4 left-5 text-[11px] font-600 px-2.5 py-1 rounded-full bg-blue-500/90 text-white">
+                  Исторический минимум
+                </span>
+              )}
+            </div>
+
+            <div className="overflow-y-auto p-7">
+              {/* Title row */}
+              <div className="flex items-start justify-between gap-3 mb-5">
+                <div>
+                  <h2 className={`text-[24px] font-700 ${t.text}`}>{selectedGame.name}</h2>
+                  <div className={`flex items-center gap-3 text-[14px] mt-1 ${t.muted}`}>
+                    <span className={`text-[11px] font-500 px-2 py-0.5 rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
+                      {selectedGame.genre}
+                    </span>
+                    <span className="flex items-center gap-1"><Icon name="Star" size={14} className="text-amber-400" />{selectedGame.score}</span>
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="flex items-center gap-2 justify-end">
+                    <span className={`flex items-center justify-center h-7 px-2 rounded-md text-[13px] font-700 ${selectedGame.discount <= -75 ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-500'}`}>
+                      {selectedGame.discount}%
+                    </span>
+                    <span className={`text-[22px] font-700 ${t.text}`}>
+                      {selectedGame.price === 0 ? '0 ₽' : `${selectedGame.price} ₽`}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Meta grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+                {[
+                  { icon: 'Star', label: 'Рейтинг', value: selectedGame.score },
+                  { icon: 'Calendar', label: 'Дата выхода', value: selectedGame.release },
+                  { icon: 'Tag', label: 'Жанр', value: selectedGame.genre },
+                  { icon: 'Users', label: 'Игроков', value: selectedGame.players },
+                  { icon: 'MessagesSquare', label: 'Сообществ', value: String(selectedGame.communities) },
+                  { icon: 'Percent', label: 'Скидка', value: `${selectedGame.discount}%` },
+                ].map((m) => (
+                  <div key={m.label} className={`rounded-2xl border p-3 ${t.border}`}>
+                    <div className={`flex items-center gap-1.5 text-[12px] ${t.muted}`}>
+                      <Icon name={m.icon} size={13} />
+                      {m.label}
+                    </div>
+                    <div className={`text-[16px] font-700 mt-1 ${t.text}`}>{m.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-3">
+                <button className={`flex-1 flex items-center justify-center gap-2 h-11 rounded-full font-500 text-[15px] ${t.activeBtn}`}>
+                  <Icon name="ShoppingCart" size={17} />
+                  {selectedGame.price === 0 ? 'Играть бесплатно' : 'Купить'}
+                </button>
+                <button
+                  onClick={() => { openGame(selectedGame.name); setSelectedGame(null); }}
+                  className={`flex items-center justify-center gap-2 h-11 px-5 rounded-full border font-500 text-[15px] ${t.border} ${t.text} ${t.hover}`}
+                >
+                  <Icon name="Users" size={17} />
+                  Сообщества
+                </button>
               </div>
             </div>
           </div>
