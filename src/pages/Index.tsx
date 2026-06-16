@@ -309,6 +309,24 @@ const Index = () => {
   const [activeShot, setActiveShot] = useState(0);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [onlyFavorites, setOnlyFavorites] = useState(false);
+  const [userReviews, setUserReviews] = useState<Record<string, { name: string; rating: number; text: string; time: string }[]>>({});
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewHover, setReviewHover] = useState(0);
+  const [reviewText, setReviewText] = useState('');
+
+  const submitReview = (gameName: string) => {
+    if (!reviewRating || !reviewText.trim()) return;
+    setUserReviews((prev) => ({
+      ...prev,
+      [gameName]: [
+        { name: 'Вы', rating: reviewRating, text: reviewText.trim(), time: 'только что' },
+        ...(prev[gameName] || []),
+      ],
+    }));
+    setReviewRating(0);
+    setReviewHover(0);
+    setReviewText('');
+  };
 
   const toggleFavorite = (name: string) => {
     setFavorites((f) => (f.includes(name) ? f.filter((n) => n !== name) : [...f, name]));
@@ -350,6 +368,9 @@ const Index = () => {
 
   const openGameCard = (g: Game) => {
     setActiveShot(0);
+    setReviewRating(0);
+    setReviewHover(0);
+    setReviewText('');
     setSelectedGame(g);
   };
 
@@ -1566,9 +1587,49 @@ const Index = () => {
                     {selectedGame.rating} / 5
                   </span>
                 </div>
+                {/* Review form */}
+                <div className={`rounded-2xl border p-3.5 mb-3 ${t.border}`}>
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <span className={`text-[13px] font-500 ${t.text}`}>Ваша оценка:</span>
+                    <div className="flex gap-0.5" onMouseLeave={() => setReviewHover(0)}>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <button
+                          key={i}
+                          onMouseEnter={() => setReviewHover(i + 1)}
+                          onClick={() => setReviewRating(i + 1)}
+                          className="transition-transform hover:scale-110"
+                        >
+                          <Icon
+                            name="Star"
+                            size={18}
+                            className={i < (reviewHover || reviewRating) ? 'text-amber-400 fill-amber-400' : t.muted}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <textarea
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                    placeholder="Поделись впечатлениями об игре..."
+                    rows={2}
+                    className={`w-full bg-transparent outline-none resize-none text-[14px] ${t.text} placeholder:${t.muted}`}
+                  />
+                  <div className="flex justify-end mt-1">
+                    <button
+                      onClick={() => submitReview(selectedGame.name)}
+                      disabled={!reviewRating || !reviewText.trim()}
+                      className={`flex items-center gap-1.5 h-9 px-4 rounded-full text-[14px] font-500 transition-opacity ${t.activeBtn} ${(!reviewRating || !reviewText.trim()) ? 'opacity-40 cursor-not-allowed' : ''}`}
+                    >
+                      <Icon name="Send" size={15} />
+                      Отправить
+                    </button>
+                  </div>
+                </div>
+
                 <div className="flex flex-col gap-3">
-                  {gameReviews.map((rev) => (
-                    <div key={rev.name} className={`rounded-2xl border p-3.5 ${t.border}`}>
+                  {[...(userReviews[selectedGame.name] || []), ...gameReviews].map((rev, idx) => (
+                    <div key={idx} className={`rounded-2xl border p-3.5 ${t.border}`}>
                       <div className="flex items-center gap-2.5 mb-1.5">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-600 ${t.activeBtn}`}>
                           {rev.name[0]}
