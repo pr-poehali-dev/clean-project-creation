@@ -97,6 +97,15 @@ const sysReq = [
   { icon: 'HardDrive', label: 'Место на диске', value: '40 ГБ' },
 ];
 
+const achievements = [
+  { icon: 'Swords', title: 'Первая кровь', desc: 'Сделай первое убийство в матче', got: true },
+  { icon: 'Flame', title: 'На разогреве', desc: 'Выиграй 10 матчей подряд', got: true },
+  { icon: 'Crown', title: 'Чемпион сезона', desc: 'Заверши сезон в топ-1% игроков', got: false },
+  { icon: 'Target', title: 'Снайпер', desc: '500 хедшотов за карьеру', got: true },
+  { icon: 'Trophy', title: 'Коллекционер', desc: 'Собери все награды события', got: false },
+  { icon: 'Zap', title: 'Молниеносный', desc: 'Победа меньше чем за 10 минут', got: false },
+];
+
 const gameReviews = [
   { name: 'NeoStrike', rating: 5, text: 'Залипаю каждый вечер, баланс на высоте. Однозначно рекомендую друзьям!', time: '2 дня назад' },
   { name: 'LunaQueen', rating: 5, text: 'Лучшая в своём жанре. Графика, звук и геймплей — всё на уровне.', time: '5 дней назад' },
@@ -315,6 +324,14 @@ const Index = () => {
   const [reviewText, setReviewText] = useState('');
   const mainRef = useRef<HTMLElement>(null);
   const [copied, setCopied] = useState(false);
+  const [compare, setCompare] = useState<string[]>([]);
+  const [showCompare, setShowCompare] = useState(false);
+
+  const toggleCompare = (name: string) => {
+    setCompare((c) =>
+      c.includes(name) ? c.filter((n) => n !== name) : c.length < 3 ? [...c, name] : c
+    );
+  };
 
   const shareGame = (name: string) => {
     const url = `${window.location.origin}${window.location.pathname}?game=${encodeURIComponent(name)}`;
@@ -699,6 +716,35 @@ const Index = () => {
                       <Icon name={r.icon} size={16} className={t.muted} fallback="Cpu" />
                       <span className={`text-[13px] w-28 shrink-0 ${t.muted}`}>{r.label}</span>
                       <span className={`text-[13px] font-500 ${t.text}`}>{r.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Achievements */}
+              <div className="mt-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className={`text-[13px] tracking-[0.06em] font-500 ${t.muted}`}>
+                    ДОСТИЖЕНИЯ
+                  </h3>
+                  <span className={`text-[13px] font-600 ${t.text}`}>
+                    {achievements.filter((a) => a.got).length} / {achievements.length}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {achievements.map((a) => (
+                    <div
+                      key={a.title}
+                      className={`flex items-center gap-3 rounded-2xl border p-3 ${t.border} ${a.got ? '' : 'opacity-50'}`}
+                    >
+                      <div className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center ${a.got ? 'bg-amber-500/20 text-amber-500' : dark ? 'bg-white/[0.06] text-[#7a7a7a]' : 'bg-black/[0.05] text-[#9a9a9a]'}`}>
+                        <Icon name={a.got ? a.icon : 'Lock'} size={18} fallback="Trophy" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className={`text-[13px] font-600 truncate ${t.text}`}>{a.title}</div>
+                        <div className={`text-[11px] truncate ${t.muted}`}>{a.desc}</div>
+                      </div>
+                      {a.got && <Icon name="CircleCheck" size={16} className="text-green-500 shrink-0" />}
                     </div>
                   ))}
                 </div>
@@ -1284,6 +1330,13 @@ const Index = () => {
                         )}
                       </div>
                       <button
+                        onClick={(e) => { e.stopPropagation(); toggleCompare(g.name); }}
+                        title="Добавить к сравнению"
+                        className={`shrink-0 transition-colors ${compare.includes(g.name) ? 'text-blue-500' : `${t.muted} hover:text-blue-500`} ${!compare.includes(g.name) && compare.length >= 3 ? 'opacity-30 pointer-events-none' : ''}`}
+                      >
+                        <Icon name={compare.includes(g.name) ? 'CheckSquare' : 'Scale'} size={17} />
+                      </button>
+                      <button
                         onClick={(e) => { e.stopPropagation(); toggleFavorite(g.name); }}
                         className={`shrink-0 transition-colors ${favorites.includes(g.name) ? 'text-red-500' : `${t.muted} hover:text-red-500`}`}
                       >
@@ -1338,6 +1391,37 @@ const Index = () => {
                 </div>
               )}
             </div>
+
+            {/* Compare bar */}
+            {compare.length > 0 && (
+              <div className={`sticky bottom-4 mt-4 flex items-center gap-3 rounded-2xl border p-3 shadow-lg ${t.panel} ${t.border}`}>
+                <Icon name="Scale" size={18} className={t.muted} />
+                <span className={`text-[14px] font-500 ${t.text}`}>
+                  К сравнению: {compare.length} / 3
+                </span>
+                <div className="flex gap-1.5 flex-1 overflow-x-auto">
+                  {compare.map((name) => (
+                    <span key={name} className={`flex items-center gap-1 text-[12px] font-500 px-2 py-1 rounded-full whitespace-nowrap ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
+                      {name}
+                      <button onClick={() => toggleCompare(name)}>
+                        <Icon name="X" size={12} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <button onClick={() => setCompare([])} className={`text-[13px] ${t.muted} hover:${t.text}`}>
+                  Очистить
+                </button>
+                <button
+                  onClick={() => setShowCompare(true)}
+                  disabled={compare.length < 2}
+                  className={`flex items-center gap-1.5 h-9 px-4 rounded-full text-[14px] font-500 ${t.activeBtn} ${compare.length < 2 ? 'opacity-40 cursor-not-allowed' : ''}`}
+                >
+                  <Icon name="Scale" size={15} />
+                  Сравнить
+                </button>
+              </div>
+            )}
           </div>
         ) : active === 'Турниры' ? (
           <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-6 max-w-[1040px] mx-auto p-5 sm:p-7">
@@ -1759,6 +1843,86 @@ const Index = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* COMPARE MODAL */}
+      {showCompare && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 animate-fade-in"
+          onClick={() => setShowCompare(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={`relative w-full max-w-3xl max-h-[88vh] rounded-3xl border overflow-hidden flex flex-col ${t.panel} animate-scale-in`}
+          >
+            <div className={`flex items-center justify-between px-6 py-4 border-b ${t.border}`}>
+              <h2 className={`text-[18px] font-700 ${t.text}`}>Сравнение игр</h2>
+              <button
+                onClick={() => setShowCompare(false)}
+                className={`w-9 h-9 rounded-full flex items-center justify-center ${t.hover} ${t.muted}`}
+              >
+                <Icon name="X" size={18} />
+              </button>
+            </div>
+
+            <div className="overflow-auto p-6">
+              {(() => {
+                const cg = games.filter((g) => compare.includes(g.name));
+                const rows: { label: string; key: (g: Game) => string; best?: 'min' | 'max'; raw?: (g: Game) => number }[] = [
+                  { label: 'Жанр', key: (g) => g.genre },
+                  { label: 'Цена', key: (g) => (g.price === 0 ? '0 ₽' : `${g.price} ₽`), best: 'min', raw: (g) => g.price },
+                  { label: 'Скидка', key: (g) => `${g.discount}%`, best: 'min', raw: (g) => g.discount },
+                  { label: 'Рейтинг', key: (g) => g.score, best: 'max', raw: (g) => parseFloat(g.score) },
+                  { label: 'Игроков', key: (g) => g.players },
+                  { label: 'Сообществ', key: (g) => String(g.communities), best: 'max', raw: (g) => g.communities },
+                  { label: 'Дата выхода', key: (g) => g.release },
+                ];
+                return (
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr>
+                        <th className="text-left"></th>
+                        {cg.map((g) => (
+                          <th key={g.name} className="p-2 align-bottom">
+                            <div className={`w-14 h-10 mx-auto rounded-lg bg-gradient-to-br ${g.color} flex items-center justify-center mb-1.5`}>
+                              <Icon name={g.icon} size={20} className={t.text} />
+                            </div>
+                            <div className={`text-[13px] font-600 text-center ${t.text}`}>{g.name}</div>
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((r) => {
+                        let bestVal: number | null = null;
+                        if (r.best && r.raw) {
+                          const vals = cg.map(r.raw);
+                          bestVal = r.best === 'min' ? Math.min(...vals) : Math.max(...vals);
+                        }
+                        return (
+                          <tr key={r.label} className={`border-t ${t.border}`}>
+                            <td className={`py-3 pr-3 text-[13px] font-500 whitespace-nowrap ${t.muted}`}>{r.label}</td>
+                            {cg.map((g) => {
+                              const isBest = bestVal !== null && r.raw && r.raw(g) === bestVal && cg.length > 1;
+                              return (
+                                <td key={g.name} className="py-3 px-2 text-center">
+                                  <span className={`text-[14px] ${isBest ? 'font-700 text-green-500' : `font-500 ${t.text}`}`}>
+                                    {r.key(g)}
+                                    {isBest && <Icon name="Crown" size={12} className="inline ml-1 -mt-0.5 text-green-500" />}
+                                  </span>
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                );
+              })()}
             </div>
           </div>
         </div>
