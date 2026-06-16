@@ -281,6 +281,7 @@ const Index = () => {
   const [activeChat, setActiveChat] = useState(chats[0].id);
   const [feedTab, setFeedTab] = useState('all');
   const [sortBy, setSortBy] = useState<{ key: string; dir: 'asc' | 'desc' }>({ key: 'discount', dir: 'asc' });
+  const [gameSearch, setGameSearch] = useState('');
 
   const toggleSort = (key: string) => {
     setSortBy((s) =>
@@ -797,6 +798,22 @@ const Index = () => {
               </p>
             </div>
 
+            {/* Search */}
+            <div className={`flex items-center gap-2 h-11 px-4 rounded-full border mb-4 ${t.border}`}>
+              <Icon name="Search" size={18} className={t.muted} />
+              <input
+                value={gameSearch}
+                onChange={(e) => setGameSearch(e.target.value)}
+                placeholder="Поиск по названию игры..."
+                className={`flex-1 bg-transparent outline-none text-[15px] ${t.text} placeholder:${t.muted}`}
+              />
+              {gameSearch && (
+                <button onClick={() => setGameSearch('')} className={t.muted}>
+                  <Icon name="X" size={18} />
+                </button>
+              )}
+            </div>
+
             {/* Genre filters */}
             <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
               {genres.map((g) => (
@@ -836,8 +853,11 @@ const Index = () => {
               </div>
 
               {/* Rows */}
-              {sortGames(games.filter((g) => genre === 'Все' || g.genre === genre))
-                .map((g) => (
+              {sortGames(
+                games
+                  .filter((g) => genre === 'Все' || g.genre === genre)
+                  .filter((g) => g.name.toLowerCase().includes(gameSearch.toLowerCase()))
+              ).map((g) => (
                   <div
                     key={g.name}
                     onClick={() => openGame(g.name)}
@@ -893,6 +913,16 @@ const Index = () => {
                     </span>
                   </div>
                 ))}
+
+              {games
+                .filter((g) => genre === 'Все' || g.genre === genre)
+                .filter((g) => g.name.toLowerCase().includes(gameSearch.toLowerCase()))
+                .length === 0 && (
+                <div className={`py-12 text-center ${t.muted}`}>
+                  <Icon name="SearchX" size={32} className="mx-auto mb-2" />
+                  <p className="text-[14px]">Ничего не найдено</p>
+                </div>
+              )}
             </div>
           </div>
         ) : active === 'Турниры' ? (
