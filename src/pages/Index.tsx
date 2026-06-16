@@ -538,7 +538,298 @@ const Index = () => {
       <main
         className={`flex-1 h-full rounded-3xl border transition-colors overflow-y-auto ${t.panel}`}
       >
-        {active === 'Обзор' ? (
+        {selectedGame ? (
+          <div className="max-w-[760px] mx-auto p-5 sm:p-7">
+            {/* Back bar */}
+            <button
+              onClick={() => setSelectedGame(null)}
+              className={`flex items-center gap-1.5 text-[14px] font-500 mb-5 ${t.muted} hover:${t.text} transition-colors`}
+            >
+              <Icon name="ArrowLeft" size={17} />
+              Назад к каталогу
+            </button>
+
+            {/* Banner */}
+            <div className={`relative h-44 rounded-3xl overflow-hidden bg-gradient-to-br ${selectedGame.color} flex items-center justify-center mb-6`}>
+              <Icon name={selectedGame.icon} size={64} className={t.text} />
+              <button
+                onClick={() => toggleFavorite(selectedGame.name)}
+                className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 transition-transform ${favorites.includes(selectedGame.name) ? 'bg-red-500 text-white' : dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'}`}
+              >
+                <Icon name="Heart" size={19} className={favorites.includes(selectedGame.name) ? 'fill-white' : ''} />
+              </button>
+              {selectedGame.low && (
+                <span className="absolute bottom-4 left-5 text-[11px] font-600 px-2.5 py-1 rounded-full bg-blue-500/90 text-white">
+                  Исторический минимум
+                </span>
+              )}
+            </div>
+
+            <div>
+              {/* Title row */}
+              <div className="flex items-start justify-between gap-3 mb-5">
+                <div>
+                  <h2 className={`text-[28px] font-700 ${t.text}`}>{selectedGame.name}</h2>
+                  <div className={`flex items-center gap-3 text-[14px] mt-1 ${t.muted}`}>
+                    <span className={`text-[11px] font-500 px-2 py-0.5 rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
+                      {selectedGame.genre}
+                    </span>
+                    <span className="flex items-center gap-1"><Icon name="Star" size={14} className="text-amber-400" />{selectedGame.score}</span>
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="flex items-center gap-2 justify-end">
+                    <span className={`flex items-center justify-center h-7 px-2 rounded-md text-[13px] font-700 ${selectedGame.discount <= -75 ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-500'}`}>
+                      {selectedGame.discount}%
+                    </span>
+                    <span className={`text-[22px] font-700 ${t.text}`}>
+                      {selectedGame.price === 0 ? '0 ₽' : `${selectedGame.price} ₽`}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p className={`text-[14px] leading-relaxed mb-5 ${t.text}`}>
+                {selectedGame.desc}
+              </p>
+
+              {/* Screenshots gallery */}
+              <div className="mb-6">
+                <div className="relative rounded-2xl overflow-hidden aspect-video mb-2">
+                  <img
+                    src={selectedGame.shots[activeShot]}
+                    alt={`${selectedGame.name} скриншот`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  {selectedGame.shots.map((s, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveShot(i)}
+                      className={`relative rounded-lg overflow-hidden aspect-video flex-1 transition-all ${
+                        activeShot === i ? 'ring-2 ring-offset-2 ring-blue-500 ring-offset-transparent' : 'opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={s} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Meta grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+                {[
+                  { icon: 'Star', label: 'Рейтинг', value: selectedGame.score },
+                  { icon: 'Calendar', label: 'Дата выхода', value: selectedGame.release },
+                  { icon: 'Tag', label: 'Жанр', value: selectedGame.genre },
+                  { icon: 'Users', label: 'Игроков', value: selectedGame.players },
+                  { icon: 'MessagesSquare', label: 'Сообществ', value: String(selectedGame.communities) },
+                  { icon: 'Percent', label: 'Скидка', value: `${selectedGame.discount}%` },
+                ].map((m) => (
+                  <div key={m.label} className={`rounded-2xl border p-3 ${t.border}`}>
+                    <div className={`flex items-center gap-1.5 text-[12px] ${t.muted}`}>
+                      <Icon name={m.icon} size={13} />
+                      {m.label}
+                    </div>
+                    <div className={`text-[16px] font-700 mt-1 ${t.text}`}>{m.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-3">
+                <button className={`flex-1 flex items-center justify-center gap-2 h-11 rounded-full font-500 text-[15px] ${t.activeBtn}`}>
+                  <Icon name="ShoppingCart" size={17} />
+                  {selectedGame.price === 0 ? 'Играть бесплатно' : 'Купить'}
+                </button>
+                <button
+                  onClick={() => { openGame(selectedGame.name); setSelectedGame(null); }}
+                  className={`flex items-center justify-center gap-2 h-11 px-5 rounded-full border font-500 text-[15px] ${t.border} ${t.text} ${t.hover}`}
+                >
+                  <Icon name="Users" size={17} />
+                  Сообщества
+                </button>
+              </div>
+
+              {/* System requirements */}
+              <div className="mt-6">
+                <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>
+                  СИСТЕМНЫЕ ТРЕБОВАНИЯ
+                </h3>
+                <div className={`rounded-2xl border divide-y ${t.border} ${dark ? 'divide-white/[0.06]' : 'divide-black/[0.06]'}`}>
+                  {sysReq.map((r) => (
+                    <div key={r.label} className="flex items-center gap-3 px-4 py-2.5">
+                      <Icon name={r.icon} size={16} className={t.muted} fallback="Cpu" />
+                      <span className={`text-[13px] w-28 shrink-0 ${t.muted}`}>{r.label}</span>
+                      <span className={`text-[13px] font-500 ${t.text}`}>{r.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Reviews */}
+              <div className="mt-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className={`text-[13px] tracking-[0.06em] font-500 ${t.muted}`}>
+                    ОТЗЫВЫ ИГРОКОВ
+                  </h3>
+                  <span className="flex items-center gap-1 text-[13px] font-600 text-amber-500">
+                    <Icon name="Star" size={14} className="fill-amber-500" />
+                    {selectedGame.rating} / 5
+                  </span>
+                </div>
+                {/* Review form */}
+                <div className={`rounded-2xl border p-3.5 mb-3 ${t.border}`}>
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <span className={`text-[13px] font-500 ${t.text}`}>Ваша оценка:</span>
+                    <div className="flex gap-0.5" onMouseLeave={() => setReviewHover(0)}>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <button
+                          key={i}
+                          onMouseEnter={() => setReviewHover(i + 1)}
+                          onClick={() => setReviewRating(i + 1)}
+                          className="transition-transform hover:scale-110"
+                        >
+                          <Icon
+                            name="Star"
+                            size={18}
+                            className={i < (reviewHover || reviewRating) ? 'text-amber-400 fill-amber-400' : t.muted}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <textarea
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                    placeholder="Поделись впечатлениями об игре..."
+                    rows={2}
+                    className={`w-full bg-transparent outline-none resize-none text-[14px] ${t.text} placeholder:${t.muted}`}
+                  />
+                  <div className="flex justify-end mt-1">
+                    <button
+                      onClick={() => submitReview(selectedGame.name)}
+                      disabled={!reviewRating || !reviewText.trim()}
+                      className={`flex items-center gap-1.5 h-9 px-4 rounded-full text-[14px] font-500 transition-opacity ${t.activeBtn} ${(!reviewRating || !reviewText.trim()) ? 'opacity-40 cursor-not-allowed' : ''}`}
+                    >
+                      <Icon name="Send" size={15} />
+                      Отправить
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  {[...(userReviews[selectedGame.name] || []), ...gameReviews].map((rev, idx) => (
+                    <div key={idx} className={`rounded-2xl border p-3.5 ${t.border}`}>
+                      <div className="flex items-center gap-2.5 mb-1.5">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-600 ${t.activeBtn}`}>
+                          {rev.name[0]}
+                        </div>
+                        <div className="flex-1">
+                          <div className={`text-[13px] font-600 ${t.text}`}>{rev.name}</div>
+                          <div className={`text-[11px] ${t.muted}`}>{rev.time}</div>
+                        </div>
+                        <div className="flex gap-0.5">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Icon
+                              key={i}
+                              name="Star"
+                              size={12}
+                              className={i < rev.rating ? 'text-amber-400 fill-amber-400' : t.muted}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <p className={`text-[13px] leading-relaxed ${t.text}`}>{rev.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Similar by price */}
+              {(() => {
+                const byPrice = games
+                  .filter((g) => g.name !== selectedGame.name)
+                  .filter((g) => Math.abs(g.price - selectedGame.price) <= 300)
+                  .slice(0, 3);
+                if (byPrice.length === 0) return null;
+                return (
+                  <div className="mt-6">
+                    <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>
+                      ПОХОЖИЕ ПО ЦЕНЕ
+                    </h3>
+                    <div className="flex flex-col gap-2">
+                      {byPrice.map((g) => (
+                        <button
+                          key={g.name}
+                          onClick={() => openGameCard(g)}
+                          className={`flex items-center gap-3 rounded-2xl border p-2.5 text-left transition-colors ${t.border} ${t.hover}`}
+                        >
+                          <div className={`w-12 h-9 rounded-md shrink-0 bg-gradient-to-br ${g.color} flex items-center justify-center`}>
+                            <Icon name={g.icon} size={17} className={t.text} />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className={`text-[14px] font-600 truncate ${t.text}`}>{g.name}</div>
+                            <div className={`text-[12px] ${t.muted}`}>{g.genre}</div>
+                          </div>
+                          <span className={`flex items-center justify-center h-7 px-2 rounded-md text-[12px] font-700 ${g.discount <= -75 ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-500'}`}>
+                            {g.discount}%
+                          </span>
+                          <span className={`text-[14px] font-600 ${t.text}`}>
+                            {g.price === 0 ? '0 ₽' : `${g.price} ₽`}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Similar games */}
+              {(() => {
+                const similar = games.filter(
+                  (g) => g.genre === selectedGame.genre && g.name !== selectedGame.name
+                );
+                if (similar.length === 0) return null;
+                return (
+                  <div className="mt-6">
+                    <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>
+                      ПОХОЖИЕ ПО ЖАНРУ · {selectedGame.genre.toUpperCase()}
+                    </h3>
+                    <div className="flex flex-col gap-2">
+                      {similar.map((g) => (
+                        <button
+                          key={g.name}
+                          onClick={() => openGameCard(g)}
+                          className={`flex items-center gap-3 rounded-2xl border p-2.5 text-left transition-colors ${t.border} ${t.hover}`}
+                        >
+                          <div className={`w-12 h-9 rounded-md shrink-0 bg-gradient-to-br ${g.color} flex items-center justify-center`}>
+                            <Icon name={g.icon} size={17} className={t.text} />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className={`text-[14px] font-600 truncate ${t.text}`}>{g.name}</div>
+                            <div className={`flex items-center gap-1 text-[12px] ${t.muted}`}>
+                              <Icon name="Star" size={12} className="text-amber-400" />
+                              {g.score}
+                            </div>
+                          </div>
+                          <span className={`flex items-center justify-center h-7 px-2 rounded-md text-[12px] font-700 ${g.discount <= -75 ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-500'}`}>
+                            {g.discount}%
+                          </span>
+                          <span className={`text-[14px] font-600 ${t.text}`}>
+                            {g.price === 0 ? '0 ₽' : `${g.price} ₽`}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        ) : active === 'Обзор' ? (
           <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-6 max-w-[1040px] mx-auto p-5 sm:p-7">
             <div>
             {/* Feed header */}
@@ -1438,306 +1729,6 @@ const Index = () => {
         </div>
       )}
 
-      {/* GAME DETAIL OVERLAY */}
-      {selectedGame && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 animate-fade-in"
-          onClick={() => setSelectedGame(null)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className={`relative w-full max-w-2xl max-h-[88vh] rounded-3xl border overflow-hidden flex flex-col ${t.panel} animate-scale-in`}
-          >
-            {/* Banner */}
-            <div className={`relative h-36 bg-gradient-to-br ${selectedGame.color} shrink-0 flex items-center justify-center`}>
-              <Icon name={selectedGame.icon} size={56} className={t.text} />
-              <div className="absolute top-4 right-4 flex gap-2">
-                <button
-                  onClick={() => toggleFavorite(selectedGame.name)}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center hover:scale-105 transition-transform ${favorites.includes(selectedGame.name) ? 'bg-red-500 text-white' : dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'}`}
-                >
-                  <Icon name="Heart" size={18} className={favorites.includes(selectedGame.name) ? 'fill-white' : ''} />
-                </button>
-                <button
-                  onClick={() => setSelectedGame(null)}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center ${dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'} hover:scale-105 transition-transform`}
-                >
-                  <Icon name="X" size={18} />
-                </button>
-              </div>
-              {selectedGame.low && (
-                <span className="absolute bottom-4 left-5 text-[11px] font-600 px-2.5 py-1 rounded-full bg-blue-500/90 text-white">
-                  Исторический минимум
-                </span>
-              )}
-            </div>
-
-            <div className="overflow-y-auto p-7">
-              {/* Title row */}
-              <div className="flex items-start justify-between gap-3 mb-5">
-                <div>
-                  <h2 className={`text-[24px] font-700 ${t.text}`}>{selectedGame.name}</h2>
-                  <div className={`flex items-center gap-3 text-[14px] mt-1 ${t.muted}`}>
-                    <span className={`text-[11px] font-500 px-2 py-0.5 rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
-                      {selectedGame.genre}
-                    </span>
-                    <span className="flex items-center gap-1"><Icon name="Star" size={14} className="text-amber-400" />{selectedGame.score}</span>
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <div className="flex items-center gap-2 justify-end">
-                    <span className={`flex items-center justify-center h-7 px-2 rounded-md text-[13px] font-700 ${selectedGame.discount <= -75 ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-500'}`}>
-                      {selectedGame.discount}%
-                    </span>
-                    <span className={`text-[22px] font-700 ${t.text}`}>
-                      {selectedGame.price === 0 ? '0 ₽' : `${selectedGame.price} ₽`}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Description */}
-              <p className={`text-[14px] leading-relaxed mb-5 ${t.text}`}>
-                {selectedGame.desc}
-              </p>
-
-              {/* Screenshots gallery */}
-              <div className="mb-6">
-                <div className="relative rounded-2xl overflow-hidden aspect-video mb-2">
-                  <img
-                    src={selectedGame.shots[activeShot]}
-                    alt={`${selectedGame.name} скриншот`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  {selectedGame.shots.map((s, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setActiveShot(i)}
-                      className={`relative rounded-lg overflow-hidden aspect-video flex-1 transition-all ${
-                        activeShot === i ? 'ring-2 ring-offset-2 ring-blue-500 ring-offset-transparent' : 'opacity-60 hover:opacity-100'
-                      }`}
-                    >
-                      <img src={s} alt="" className="w-full h-full object-cover" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Meta grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
-                {[
-                  { icon: 'Star', label: 'Рейтинг', value: selectedGame.score },
-                  { icon: 'Calendar', label: 'Дата выхода', value: selectedGame.release },
-                  { icon: 'Tag', label: 'Жанр', value: selectedGame.genre },
-                  { icon: 'Users', label: 'Игроков', value: selectedGame.players },
-                  { icon: 'MessagesSquare', label: 'Сообществ', value: String(selectedGame.communities) },
-                  { icon: 'Percent', label: 'Скидка', value: `${selectedGame.discount}%` },
-                ].map((m) => (
-                  <div key={m.label} className={`rounded-2xl border p-3 ${t.border}`}>
-                    <div className={`flex items-center gap-1.5 text-[12px] ${t.muted}`}>
-                      <Icon name={m.icon} size={13} />
-                      {m.label}
-                    </div>
-                    <div className={`text-[16px] font-700 mt-1 ${t.text}`}>{m.value}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-3">
-                <button className={`flex-1 flex items-center justify-center gap-2 h-11 rounded-full font-500 text-[15px] ${t.activeBtn}`}>
-                  <Icon name="ShoppingCart" size={17} />
-                  {selectedGame.price === 0 ? 'Играть бесплатно' : 'Купить'}
-                </button>
-                <button
-                  onClick={() => { openGame(selectedGame.name); setSelectedGame(null); }}
-                  className={`flex items-center justify-center gap-2 h-11 px-5 rounded-full border font-500 text-[15px] ${t.border} ${t.text} ${t.hover}`}
-                >
-                  <Icon name="Users" size={17} />
-                  Сообщества
-                </button>
-              </div>
-
-              {/* System requirements */}
-              <div className="mt-6">
-                <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>
-                  СИСТЕМНЫЕ ТРЕБОВАНИЯ
-                </h3>
-                <div className={`rounded-2xl border divide-y ${t.border} ${dark ? 'divide-white/[0.06]' : 'divide-black/[0.06]'}`}>
-                  {sysReq.map((r) => (
-                    <div key={r.label} className="flex items-center gap-3 px-4 py-2.5">
-                      <Icon name={r.icon} size={16} className={t.muted} fallback="Cpu" />
-                      <span className={`text-[13px] w-28 shrink-0 ${t.muted}`}>{r.label}</span>
-                      <span className={`text-[13px] font-500 ${t.text}`}>{r.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Reviews */}
-              <div className="mt-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className={`text-[13px] tracking-[0.06em] font-500 ${t.muted}`}>
-                    ОТЗЫВЫ ИГРОКОВ
-                  </h3>
-                  <span className="flex items-center gap-1 text-[13px] font-600 text-amber-500">
-                    <Icon name="Star" size={14} className="fill-amber-500" />
-                    {selectedGame.rating} / 5
-                  </span>
-                </div>
-                {/* Review form */}
-                <div className={`rounded-2xl border p-3.5 mb-3 ${t.border}`}>
-                  <div className="flex items-center gap-2 mb-2.5">
-                    <span className={`text-[13px] font-500 ${t.text}`}>Ваша оценка:</span>
-                    <div className="flex gap-0.5" onMouseLeave={() => setReviewHover(0)}>
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <button
-                          key={i}
-                          onMouseEnter={() => setReviewHover(i + 1)}
-                          onClick={() => setReviewRating(i + 1)}
-                          className="transition-transform hover:scale-110"
-                        >
-                          <Icon
-                            name="Star"
-                            size={18}
-                            className={i < (reviewHover || reviewRating) ? 'text-amber-400 fill-amber-400' : t.muted}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <textarea
-                    value={reviewText}
-                    onChange={(e) => setReviewText(e.target.value)}
-                    placeholder="Поделись впечатлениями об игре..."
-                    rows={2}
-                    className={`w-full bg-transparent outline-none resize-none text-[14px] ${t.text} placeholder:${t.muted}`}
-                  />
-                  <div className="flex justify-end mt-1">
-                    <button
-                      onClick={() => submitReview(selectedGame.name)}
-                      disabled={!reviewRating || !reviewText.trim()}
-                      className={`flex items-center gap-1.5 h-9 px-4 rounded-full text-[14px] font-500 transition-opacity ${t.activeBtn} ${(!reviewRating || !reviewText.trim()) ? 'opacity-40 cursor-not-allowed' : ''}`}
-                    >
-                      <Icon name="Send" size={15} />
-                      Отправить
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  {[...(userReviews[selectedGame.name] || []), ...gameReviews].map((rev, idx) => (
-                    <div key={idx} className={`rounded-2xl border p-3.5 ${t.border}`}>
-                      <div className="flex items-center gap-2.5 mb-1.5">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-600 ${t.activeBtn}`}>
-                          {rev.name[0]}
-                        </div>
-                        <div className="flex-1">
-                          <div className={`text-[13px] font-600 ${t.text}`}>{rev.name}</div>
-                          <div className={`text-[11px] ${t.muted}`}>{rev.time}</div>
-                        </div>
-                        <div className="flex gap-0.5">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Icon
-                              key={i}
-                              name="Star"
-                              size={12}
-                              className={i < rev.rating ? 'text-amber-400 fill-amber-400' : t.muted}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      <p className={`text-[13px] leading-relaxed ${t.text}`}>{rev.text}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Similar by price */}
-              {(() => {
-                const byPrice = games
-                  .filter((g) => g.name !== selectedGame.name)
-                  .filter((g) => Math.abs(g.price - selectedGame.price) <= 300)
-                  .slice(0, 3);
-                if (byPrice.length === 0) return null;
-                return (
-                  <div className="mt-6">
-                    <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>
-                      ПОХОЖИЕ ПО ЦЕНЕ
-                    </h3>
-                    <div className="flex flex-col gap-2">
-                      {byPrice.map((g) => (
-                        <button
-                          key={g.name}
-                          onClick={() => openGameCard(g)}
-                          className={`flex items-center gap-3 rounded-2xl border p-2.5 text-left transition-colors ${t.border} ${t.hover}`}
-                        >
-                          <div className={`w-12 h-9 rounded-md shrink-0 bg-gradient-to-br ${g.color} flex items-center justify-center`}>
-                            <Icon name={g.icon} size={17} className={t.text} />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className={`text-[14px] font-600 truncate ${t.text}`}>{g.name}</div>
-                            <div className={`text-[12px] ${t.muted}`}>{g.genre}</div>
-                          </div>
-                          <span className={`flex items-center justify-center h-7 px-2 rounded-md text-[12px] font-700 ${g.discount <= -75 ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-500'}`}>
-                            {g.discount}%
-                          </span>
-                          <span className={`text-[14px] font-600 ${t.text}`}>
-                            {g.price === 0 ? '0 ₽' : `${g.price} ₽`}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {/* Similar games */}
-              {(() => {
-                const similar = games.filter(
-                  (g) => g.genre === selectedGame.genre && g.name !== selectedGame.name
-                );
-                if (similar.length === 0) return null;
-                return (
-                  <div className="mt-6">
-                    <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>
-                      ПОХОЖИЕ ПО ЖАНРУ · {selectedGame.genre.toUpperCase()}
-                    </h3>
-                    <div className="flex flex-col gap-2">
-                      {similar.map((g) => (
-                        <button
-                          key={g.name}
-                          onClick={() => openGameCard(g)}
-                          className={`flex items-center gap-3 rounded-2xl border p-2.5 text-left transition-colors ${t.border} ${t.hover}`}
-                        >
-                          <div className={`w-12 h-9 rounded-md shrink-0 bg-gradient-to-br ${g.color} flex items-center justify-center`}>
-                            <Icon name={g.icon} size={17} className={t.text} />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className={`text-[14px] font-600 truncate ${t.text}`}>{g.name}</div>
-                            <div className={`flex items-center gap-1 text-[12px] ${t.muted}`}>
-                              <Icon name="Star" size={12} className="text-amber-400" />
-                              {g.score}
-                            </div>
-                          </div>
-                          <span className={`flex items-center justify-center h-7 px-2 rounded-md text-[12px] font-700 ${g.discount <= -75 ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-500'}`}>
-                            {g.discount}%
-                          </span>
-                          <span className={`text-[14px] font-600 ${t.text}`}>
-                            {g.price === 0 ? '0 ₽' : `${g.price} ₽`}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
