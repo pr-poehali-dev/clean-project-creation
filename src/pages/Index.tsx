@@ -314,6 +314,14 @@ const Index = () => {
   const [reviewHover, setReviewHover] = useState(0);
   const [reviewText, setReviewText] = useState('');
   const mainRef = useRef<HTMLElement>(null);
+  const [copied, setCopied] = useState(false);
+
+  const shareGame = (name: string) => {
+    const url = `${window.location.origin}${window.location.pathname}?game=${encodeURIComponent(name)}`;
+    navigator.clipboard?.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const submitReview = (gameName: string) => {
     if (!reviewRating || !reviewText.trim()) return;
@@ -565,12 +573,26 @@ const Index = () => {
             {/* Banner */}
             <div className={`relative h-44 rounded-3xl overflow-hidden bg-gradient-to-br ${selectedGame.color} flex items-center justify-center mb-6`}>
               <Icon name={selectedGame.icon} size={64} className={t.text} />
-              <button
-                onClick={() => toggleFavorite(selectedGame.name)}
-                className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 transition-transform ${favorites.includes(selectedGame.name) ? 'bg-red-500 text-white' : dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'}`}
-              >
-                <Icon name="Heart" size={19} className={favorites.includes(selectedGame.name) ? 'fill-white' : ''} />
-              </button>
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                {copied && (
+                  <span className="flex items-center gap-1 text-[12px] font-600 px-2.5 h-10 rounded-full bg-green-500 text-white">
+                    <Icon name="Check" size={14} />
+                    Ссылка скопирована
+                  </span>
+                )}
+                <button
+                  onClick={() => shareGame(selectedGame.name)}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 transition-transform ${dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'}`}
+                >
+                  <Icon name="Share2" size={18} />
+                </button>
+                <button
+                  onClick={() => toggleFavorite(selectedGame.name)}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 transition-transform ${favorites.includes(selectedGame.name) ? 'bg-red-500 text-white' : dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'}`}
+                >
+                  <Icon name="Heart" size={19} className={favorites.includes(selectedGame.name) ? 'fill-white' : ''} />
+                </button>
+              </div>
               {selectedGame.low && (
                 <span className="absolute bottom-4 left-5 text-[11px] font-600 px-2.5 py-1 rounded-full bg-blue-500/90 text-white">
                   Исторический минимум
