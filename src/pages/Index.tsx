@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Icon from '@/components/ui/icon';
 
 const AVATAR =
@@ -313,6 +313,7 @@ const Index = () => {
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewHover, setReviewHover] = useState(0);
   const [reviewText, setReviewText] = useState('');
+  const mainRef = useRef<HTMLElement>(null);
 
   const submitReview = (gameName: string) => {
     if (!reviewRating || !reviewText.trim()) return;
@@ -372,6 +373,7 @@ const Index = () => {
     setReviewHover(0);
     setReviewText('');
     setSelectedGame(g);
+    mainRef.current?.scrollTo({ top: 0 });
   };
 
   const t = {
@@ -536,6 +538,7 @@ const Index = () => {
 
       {/* MAIN AREA */}
       <main
+        ref={mainRef}
         className={`flex-1 h-full rounded-3xl border transition-colors overflow-y-auto ${t.panel}`}
       >
         {selectedGame ? (
