@@ -376,6 +376,11 @@ const Index = () => {
     mainRef.current?.scrollTo({ top: 0 });
   };
 
+  const closeGameCard = () => {
+    setSelectedGame(null);
+    mainRef.current?.scrollTo({ top: 0 });
+  };
+
   const t = {
     page: dark ? 'bg-[#161616]' : 'bg-[#f3f3f3]',
     panel: dark ? 'bg-[#1f1f1f] border-white/[0.06]' : 'bg-white border-black/5',
@@ -545,7 +550,7 @@ const Index = () => {
           <div className="max-w-[760px] mx-auto p-5 sm:p-7">
             {/* Back bar */}
             <button
-              onClick={() => setSelectedGame(null)}
+              onClick={closeGameCard}
               className={`flex items-center gap-1.5 text-[14px] font-500 mb-5 ${t.muted} hover:${t.text} transition-colors`}
             >
               <Icon name="ArrowLeft" size={17} />
