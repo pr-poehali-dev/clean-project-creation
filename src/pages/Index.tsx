@@ -68,14 +68,14 @@ const chatMessages = [
 ];
 
 const games = [
-  { name: 'Dota 2', genre: 'MOBA', communities: 312, players: '11.2M', rating: 4.7, icon: 'Swords', color: 'from-red-500/30 to-orange-500/10' },
-  { name: 'Valorant', genre: 'Шутер', communities: 248, players: '8.4M', rating: 4.6, icon: 'Crosshair', color: 'from-pink-500/30 to-rose-500/10' },
-  { name: 'Minecraft', genre: 'Песочница', communities: 521, players: '21.7M', rating: 4.9, icon: 'Box', color: 'from-green-500/30 to-emerald-500/10' },
-  { name: 'Counter-Strike 2', genre: 'Шутер', communities: 419, players: '15.2M', rating: 4.8, icon: 'Target', color: 'from-amber-500/30 to-yellow-500/10' },
-  { name: 'League of Legends', genre: 'MOBA', communities: 287, players: '13.5M', rating: 4.5, icon: 'Shield', color: 'from-blue-500/30 to-indigo-500/10' },
-  { name: 'Fortnite', genre: 'Battle Royale', communities: 389, players: '18.9M', rating: 4.4, icon: 'Castle', color: 'from-violet-500/30 to-purple-500/10' },
-  { name: 'Cyberpunk 2077', genre: 'RPG', communities: 96, players: '5.6M', rating: 4.3, icon: 'Cpu', color: 'from-cyan-500/30 to-blue-500/10' },
-  { name: 'Apex Legends', genre: 'Battle Royale', communities: 174, players: '9.1M', rating: 4.5, icon: 'Zap', color: 'from-orange-500/30 to-red-500/10' },
+  { name: 'Dota 2', genre: 'MOBA', communities: 312, players: '11.2M', rating: 4.7, discount: -100, price: 0, score: '94.7%', release: 'Июл 2013', low: true, icon: 'Swords', color: 'from-red-500/30 to-orange-500/10' },
+  { name: 'Valorant', genre: 'Шутер', communities: 248, players: '8.4M', rating: 4.6, discount: -50, price: 499, score: '92.3%', release: 'Июн 2020', low: false, icon: 'Crosshair', color: 'from-pink-500/30 to-rose-500/10' },
+  { name: 'Minecraft', genre: 'Песочница', communities: 521, players: '21.7M', rating: 4.9, discount: -20, price: 1199, score: '96.8%', release: 'Ноя 2011', low: false, icon: 'Box', color: 'from-green-500/30 to-emerald-500/10' },
+  { name: 'Counter-Strike 2', genre: 'Шутер', communities: 419, players: '15.2M', rating: 4.8, discount: -75, price: 0, score: '95.1%', release: 'Сен 2023', low: true, icon: 'Target', color: 'from-amber-500/30 to-yellow-500/10' },
+  { name: 'League of Legends', genre: 'MOBA', communities: 287, players: '13.5M', rating: 4.5, discount: -35, price: 844, score: '90.4%', release: 'Окт 2009', low: false, icon: 'Shield', color: 'from-blue-500/30 to-indigo-500/10' },
+  { name: 'Fortnite', genre: 'Battle Royale', communities: 389, players: '18.9M', rating: 4.4, discount: -30, price: 599, score: '89.2%', release: 'Июл 2017', low: true, icon: 'Castle', color: 'from-violet-500/30 to-purple-500/10' },
+  { name: 'Cyberpunk 2077', genre: 'RPG', communities: 96, players: '5.6M', rating: 4.3, discount: -90, price: 299, score: '88.6%', release: 'Дек 2020', low: true, icon: 'Cpu', color: 'from-cyan-500/30 to-blue-500/10' },
+  { name: 'Apex Legends', genre: 'Battle Royale', communities: 174, players: '9.1M', rating: 4.5, discount: -20, price: 480, score: '91.5%', release: 'Фев 2019', low: false, icon: 'Zap', color: 'from-orange-500/30 to-red-500/10' },
 ];
 
 const genres = ['Все', 'MOBA', 'Шутер', 'Battle Royale', 'RPG', 'Песочница'];
@@ -763,22 +763,22 @@ const Index = () => {
             </aside>
           </div>
         ) : active === 'Игры' ? (
-          <div className="p-7">
+          <div className="p-5 sm:p-7">
             {/* Header */}
-            <div className="mb-6">
-              <h1 className={`text-[28px] font-700 tracking-tight ${t.text}`}>Каталог игр</h1>
-              <p className={`text-[15px] mt-1 ${t.muted}`}>
-                Выбери игру и найди сообщества по своему вкусу
+            <div className="mb-5">
+              <h1 className={`text-[26px] font-700 tracking-tight ${t.text}`}>Каталог игр</h1>
+              <p className={`text-[14px] mt-0.5 ${t.muted}`}>
+                Лучшие скидки и рейтинги — выбери игру и найди сообщества
               </p>
             </div>
 
             {/* Genre filters */}
-            <div className="flex flex-wrap gap-2 mb-7">
+            <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
               {genres.map((g) => (
                 <button
                   key={g}
                   onClick={() => setGenre(g)}
-                  className={`h-9 px-4 rounded-full text-[14px] font-500 transition-colors ${
+                  className={`h-9 px-4 rounded-full text-[14px] font-500 whitespace-nowrap transition-colors ${
                     genre === g ? t.activeBtn : `border ${t.border} ${t.text} ${t.hover}`
                   }`}
                 >
@@ -787,37 +787,74 @@ const Index = () => {
               ))}
             </div>
 
-            {/* Games grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {/* Games table */}
+            <div className={`rounded-2xl border overflow-hidden ${t.border}`}>
+              {/* Table head */}
+              <div className={`hidden md:grid grid-cols-[1fr_90px_90px_90px_110px] items-center gap-3 px-4 py-2.5 text-[12px] font-600 tracking-wide ${t.muted} ${dark ? 'bg-white/[0.03]' : 'bg-black/[0.02]'}`}>
+                <span>Название</span>
+                <span className="text-center">Скидка</span>
+                <span className="text-right">Цена</span>
+                <span className="text-center">Рейтинг</span>
+                <span className="text-right">Выход</span>
+              </div>
+
+              {/* Rows */}
               {games
                 .filter((g) => genre === 'Все' || g.genre === genre)
                 .map((g) => (
                   <div
                     key={g.name}
                     onClick={() => openGame(g.name)}
-                    className={`group rounded-2xl border overflow-hidden transition-all hover:-translate-y-1 cursor-pointer ${t.border}`}
+                    className={`grid grid-cols-[1fr_auto] md:grid-cols-[1fr_90px_90px_90px_110px] items-center gap-3 px-4 py-2.5 cursor-pointer border-t ${t.border} ${t.hover} transition-colors`}
                   >
-                    {/* Cover */}
-                    <div className={`relative h-32 bg-gradient-to-br ${g.color} flex items-center justify-center`}>
-                      <Icon name={g.icon} size={44} className={t.text} />
-                      <span className={`absolute top-3 right-3 flex items-center gap-1 text-[12px] font-600 px-2 py-1 rounded-full ${dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'}`}>
-                        <Icon name="Star" size={12} className="text-amber-400" />
-                        {g.rating}
-                      </span>
-                    </div>
-                    {/* Info */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className={`text-[17px] font-600 ${t.text}`}>{g.name}</h3>
-                        <span className={`text-[11px] font-500 px-2 py-0.5 rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-black/[0.06] text-[#1a1a1a]'}`}>
-                          {g.genre}
-                        </span>
+                    {/* Cover + name */}
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-16 h-9 rounded-md shrink-0 bg-gradient-to-br ${g.color} flex items-center justify-center`}>
+                        <Icon name={g.icon} size={18} className={t.text} />
                       </div>
-                      <div className={`flex items-center gap-4 text-[13px] ${t.muted}`}>
-                        <span className="flex items-center gap-1.5"><Icon name="Users" size={14} />{g.communities} сообществ</span>
-                        <span className="flex items-center gap-1.5"><Icon name="Gamepad2" size={14} />{g.players}</span>
+                      <div className="min-w-0">
+                        <div className={`text-[14px] font-600 truncate ${t.text}`}>{g.name}</div>
+                        {g.low && (
+                          <span className={`text-[11px] ${t.muted}`}>исторический минимум</span>
+                        )}
                       </div>
                     </div>
+
+                    {/* Discount */}
+                    <span
+                      className={`hidden md:flex items-center justify-center h-7 rounded-md text-[13px] font-700 ${
+                        g.discount <= -75
+                          ? 'bg-blue-500/20 text-blue-400'
+                          : 'bg-green-500/20 text-green-500'
+                      }`}
+                    >
+                      {g.discount}%
+                    </span>
+
+                    {/* Price */}
+                    <span className={`hidden md:block text-right text-[14px] font-500 ${t.text}`}>
+                      {g.price === 0 ? '0 ₽' : `${g.price} ₽`}
+                    </span>
+
+                    {/* Rating */}
+                    <span className={`hidden md:flex items-center justify-center gap-1 text-[13px] ${t.muted}`}>
+                      <Icon name="Star" size={13} className="text-amber-400" />
+                      {g.score}
+                    </span>
+
+                    {/* Release */}
+                    <span className={`hidden md:block text-right text-[13px] ${t.muted}`}>
+                      {g.release}
+                    </span>
+
+                    {/* Mobile compact */}
+                    <span
+                      className={`md:hidden flex items-center justify-center h-7 px-2 rounded-md text-[13px] font-700 ${
+                        g.discount <= -75 ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-500'
+                      }`}
+                    >
+                      {g.discount}%
+                    </span>
                   </div>
                 ))}
             </div>
