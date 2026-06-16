@@ -97,14 +97,72 @@ const sysReq = [
   { icon: 'HardDrive', label: 'Место на диске', value: '40 ГБ' },
 ];
 
-const achievements = [
-  { icon: 'Swords', title: 'Первая кровь', desc: 'Сделай первое убийство в матче', got: true },
-  { icon: 'Flame', title: 'На разогреве', desc: 'Выиграй 10 матчей подряд', got: true },
-  { icon: 'Crown', title: 'Чемпион сезона', desc: 'Заверши сезон в топ-1% игроков', got: false },
-  { icon: 'Target', title: 'Снайпер', desc: '500 хедшотов за карьеру', got: true },
-  { icon: 'Trophy', title: 'Коллекционер', desc: 'Собери все награды события', got: false },
-  { icon: 'Zap', title: 'Молниеносный', desc: 'Победа меньше чем за 10 минут', got: false },
-];
+const gameAchievements: Record<string, { icon: string; title: string; desc: string; got: boolean }[]> = {
+  'Dota 2': [
+    { icon: 'Swords', title: 'Первая кровь', desc: 'Соверши первое убийство в матче', got: true },
+    { icon: 'Crown', title: 'Рампага', desc: 'Убей 5 героев подряд без смертей', got: true },
+    { icon: 'Castle', title: 'Разрушитель', desc: 'Уничтожь трон вражеской команды', got: true },
+    { icon: 'Coins', title: 'Богач', desc: 'Накопи 25 000 золота за матч', got: false },
+    { icon: 'Trophy', title: 'Аркана', desc: 'Получи особый скин на героя', got: false },
+    { icon: 'Zap', title: 'Имба', desc: 'Победа меньше чем за 20 минут', got: false },
+  ],
+  'Valorant': [
+    { icon: 'Target', title: 'Эйс', desc: 'Убей всю команду противника в раунде', got: true },
+    { icon: 'Crosshair', title: 'Хедхантер', desc: '500 хедшотов за карьеру', got: true },
+    { icon: 'ShieldCheck', title: 'Клатч', desc: 'Выиграй раунд 1 против 3', got: false },
+    { icon: 'Flame', title: 'Спайк готов', desc: 'Установи спайк 50 раз', got: true },
+    { icon: 'Crown', title: 'Радиант', desc: 'Достигни высшего ранга', got: false },
+    { icon: 'Zap', title: 'Молниеносный', desc: 'Победа всухую 13:0', got: false },
+  ],
+  'Minecraft': [
+    { icon: 'Box', title: 'Первый блок', desc: 'Добудь свой первый блок', got: true },
+    { icon: 'Pickaxe', title: 'Шахтёр', desc: 'Найди алмазы под землёй', got: true },
+    { icon: 'Castle', title: 'Архитектор', desc: 'Построй дом из 1000 блоков', got: true },
+    { icon: 'Flame', title: 'В Незере', desc: 'Открой портал в Нижний мир', got: true },
+    { icon: 'Skull', title: 'Победитель', desc: 'Победи Дракона Края', got: false },
+    { icon: 'Sparkles', title: 'Зачарованный', desc: 'Зачаруй предмет до максимума', got: false },
+  ],
+  'Counter-Strike 2': [
+    { icon: 'Target', title: 'Эйс', desc: 'Убей пятерых в одном раунде', got: true },
+    { icon: 'Bomb', title: 'Сапёр', desc: 'Разминируй бомбу 25 раз', got: true },
+    { icon: 'Crosshair', title: 'Снайпер', desc: '100 убийств из AWP', got: true },
+    { icon: 'Knife', title: 'Ножевик', desc: 'Убей врага ножом', got: false },
+    { icon: 'Crown', title: 'Global Elite', desc: 'Получи высшее звание', got: false },
+    { icon: 'Trophy', title: 'MVP', desc: 'Стань MVP матча 50 раз', got: true },
+  ],
+  'League of Legends': [
+    { icon: 'Swords', title: 'Пентакилл', desc: 'Убей всю команду в одиночку', got: false },
+    { icon: 'Castle', title: 'Покоритель', desc: 'Разрушь нексус противника', got: true },
+    { icon: 'Crown', title: 'Челленджер', desc: 'Достигни высшего дивизиона', got: false },
+    { icon: 'Shield', title: 'Несокрушимый', desc: 'Выиграй без единой смерти', got: true },
+    { icon: 'Sparkles', title: 'Коллекционер', desc: 'Открой 20 чемпионов', got: true },
+    { icon: 'Zap', title: 'Быстрая победа', desc: 'Выиграй за 15 минут', got: false },
+  ],
+  'Fortnite': [
+    { icon: 'Crown', title: 'Виктори Рояль', desc: 'Победи в королевской битве', got: true },
+    { icon: 'Castle', title: 'Строитель', desc: 'Построй 1000 конструкций', got: true },
+    { icon: 'Target', title: 'Снайпер', desc: 'Убей врага с 200 метров', got: false },
+    { icon: 'Users', title: 'Командный дух', desc: 'Победа в отряде из 4', got: true },
+    { icon: 'Sparkles', title: 'Модник', desc: 'Собери 50 скинов', got: false },
+    { icon: 'Zap', title: 'Молниеносный', desc: '10 убийств за матч', got: false },
+  ],
+  'Cyberpunk 2077': [
+    { icon: 'Cpu', title: 'Киберпсихоз', desc: 'Установи 10 имплантов', got: true },
+    { icon: 'Car', title: 'Гонщик', desc: 'Проедь 100 км по Найт-Сити', got: true },
+    { icon: 'Crosshair', title: 'Нетраннер', desc: 'Взломай 50 врагов', got: false },
+    { icon: 'BookOpen', title: 'Легенда', desc: 'Заверши основной сюжет', got: true },
+    { icon: 'Star', title: 'Самурай', desc: 'Найди все концовки игры', got: false },
+    { icon: 'Sparkles', title: 'Коллекционер', desc: 'Собери все легендарки', got: false },
+  ],
+  'Apex Legends': [
+    { icon: 'Crown', title: 'Чемпион', desc: 'Стань чемпионом матча', got: true },
+    { icon: 'Target', title: 'Меткий стрелок', desc: 'Нанеси 2000 урона за игру', got: true },
+    { icon: 'Users', title: 'Командный игрок', desc: 'Воскреси союзника 25 раз', got: true },
+    { icon: 'Zap', title: 'Хищник', desc: 'Достигни ранга Predator', got: false },
+    { icon: 'Flame', title: 'Серия побед', desc: 'Победи 3 раза подряд', got: false },
+    { icon: 'Sparkles', title: 'Легенды', desc: 'Открой всех легенд', got: false },
+  ],
+};
 
 const gameReviews = [
   { name: 'NeoStrike', rating: 5, text: 'Залипаю каждый вечер, баланс на высоте. Однозначно рекомендую друзьям!', time: '2 дня назад' },
@@ -722,17 +780,26 @@ const Index = () => {
               </div>
 
               {/* Achievements */}
+              {(() => {
+                const list = gameAchievements[selectedGame.name] || [];
+                if (list.length === 0) return null;
+                const got = list.filter((a) => a.got).length;
+                return (
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className={`text-[13px] tracking-[0.06em] font-500 ${t.muted}`}>
-                    ДОСТИЖЕНИЯ
+                    ДОСТИЖЕНИЯ В ИГРЕ
                   </h3>
                   <span className={`text-[13px] font-600 ${t.text}`}>
-                    {achievements.filter((a) => a.got).length} / {achievements.length}
+                    {got} / {list.length}
                   </span>
                 </div>
+                {/* Progress bar */}
+                <div className={`h-1.5 rounded-full overflow-hidden mb-3 ${dark ? 'bg-white/[0.08]' : 'bg-black/[0.06]'}`}>
+                  <div className="h-full bg-amber-500 rounded-full transition-all" style={{ width: `${(got / list.length) * 100}%` }} />
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {achievements.map((a) => (
+                  {list.map((a) => (
                     <div
                       key={a.title}
                       className={`flex items-center gap-3 rounded-2xl border p-3 ${t.border} ${a.got ? '' : 'opacity-50'}`}
@@ -749,6 +816,8 @@ const Index = () => {
                   ))}
                 </div>
               </div>
+                );
+              })()}
 
               {/* Reviews */}
               <div className="mt-6">
