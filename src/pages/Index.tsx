@@ -819,9 +819,20 @@ const Index = () => {
             </div>
 
             {/* Result count */}
-            <p className={`text-[13px] mb-4 ${t.muted}`}>
-              Найдено игр: <span className={`font-600 ${t.text}`}>{filteredGames.length}</span>
-            </p>
+            <div className="flex items-center gap-3 mb-4">
+              <p className={`text-[13px] ${t.muted}`}>
+                Найдено игр: <span className={`font-600 ${t.text}`}>{filteredGames.length}</span>
+              </p>
+              {(gameSearch || genre !== 'Все') && (
+                <button
+                  onClick={() => { setGameSearch(''); setGenre('Все'); }}
+                  className={`flex items-center gap-1 text-[13px] font-500 ${t.muted} hover:${t.text} transition-colors`}
+                >
+                  <Icon name="X" size={14} />
+                  Сбросить фильтры
+                </button>
+              )}
+            </div>
 
             {/* Genre filters */}
             <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
