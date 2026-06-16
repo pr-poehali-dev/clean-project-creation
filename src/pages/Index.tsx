@@ -372,6 +372,7 @@ const Index = () => {
     setReviewRating(0);
     setReviewHover(0);
     setReviewText('');
+    setActive('Игры');
     setSelectedGame(g);
     mainRef.current?.scrollTo({ top: 0 });
   };
