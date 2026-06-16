@@ -69,14 +69,14 @@ const chatMessages = [
 ];
 
 const games = [
-  { name: 'Dota 2', genre: 'MOBA', communities: 312, players: '11.2M', rating: 4.7, discount: -100, price: 0, score: '94.7%', release: 'Июл 2013', low: true, icon: 'Swords', color: 'from-red-500/30 to-orange-500/10' },
-  { name: 'Valorant', genre: 'Шутер', communities: 248, players: '8.4M', rating: 4.6, discount: -50, price: 499, score: '92.3%', release: 'Июн 2020', low: false, icon: 'Crosshair', color: 'from-pink-500/30 to-rose-500/10' },
-  { name: 'Minecraft', genre: 'Песочница', communities: 521, players: '21.7M', rating: 4.9, discount: -20, price: 1199, score: '96.8%', release: 'Ноя 2011', low: false, icon: 'Box', color: 'from-green-500/30 to-emerald-500/10' },
-  { name: 'Counter-Strike 2', genre: 'Шутер', communities: 419, players: '15.2M', rating: 4.8, discount: -75, price: 0, score: '95.1%', release: 'Сен 2023', low: true, icon: 'Target', color: 'from-amber-500/30 to-yellow-500/10' },
-  { name: 'League of Legends', genre: 'MOBA', communities: 287, players: '13.5M', rating: 4.5, discount: -35, price: 844, score: '90.4%', release: 'Окт 2009', low: false, icon: 'Shield', color: 'from-blue-500/30 to-indigo-500/10' },
-  { name: 'Fortnite', genre: 'Battle Royale', communities: 389, players: '18.9M', rating: 4.4, discount: -30, price: 599, score: '89.2%', release: 'Июл 2017', low: true, icon: 'Castle', color: 'from-violet-500/30 to-purple-500/10' },
-  { name: 'Cyberpunk 2077', genre: 'RPG', communities: 96, players: '5.6M', rating: 4.3, discount: -90, price: 299, score: '88.6%', release: 'Дек 2020', low: true, icon: 'Cpu', color: 'from-cyan-500/30 to-blue-500/10' },
-  { name: 'Apex Legends', genre: 'Battle Royale', communities: 174, players: '9.1M', rating: 4.5, discount: -20, price: 480, score: '91.5%', release: 'Фев 2019', low: false, icon: 'Zap', color: 'from-orange-500/30 to-red-500/10' },
+  { name: 'Dota 2', genre: 'MOBA', communities: 312, players: '11.2M', rating: 4.7, discount: -100, price: 0, score: '94.7%', release: 'Июл 2013', low: true, desc: 'Легендарная командная MOBA 5 на 5: выбирай героя из сотни уникальных и веди свою команду к победе на аренах киберспорта.', icon: 'Swords', color: 'from-red-500/30 to-orange-500/10' },
+  { name: 'Valorant', genre: 'Шутер', communities: 248, players: '8.4M', rating: 4.6, discount: -50, price: 499, score: '92.3%', release: 'Июн 2020', low: false, desc: 'Тактический шутер 5 на 5, где точная стрельба сочетается с уникальными способностями агентов. Каждый раунд — это шахматы на скорости.', icon: 'Crosshair', color: 'from-pink-500/30 to-rose-500/10' },
+  { name: 'Minecraft', genre: 'Песочница', communities: 521, players: '21.7M', rating: 4.9, discount: -20, price: 1199, score: '96.8%', release: 'Ноя 2011', low: false, desc: 'Бесконечный мир из блоков, где ты строишь, исследуешь и выживаешь. Твоё воображение — единственный предел.', icon: 'Box', color: 'from-green-500/30 to-emerald-500/10' },
+  { name: 'Counter-Strike 2', genre: 'Шутер', communities: 419, players: '15.2M', rating: 4.8, discount: -75, price: 0, score: '95.1%', release: 'Сен 2023', low: true, desc: 'Культовый тактический шутер нового поколения на движке Source 2. Командная игра, точность и реакция решают всё.', icon: 'Target', color: 'from-amber-500/30 to-yellow-500/10' },
+  { name: 'League of Legends', genre: 'MOBA', communities: 287, players: '13.5M', rating: 4.5, discount: -35, price: 844, score: '90.4%', release: 'Окт 2009', low: false, desc: 'Самая популярная MOBA в мире: более 160 чемпионов, глубокая стратегия и крупнейшая киберспортивная сцена.', icon: 'Shield', color: 'from-blue-500/30 to-indigo-500/10' },
+  { name: 'Fortnite', genre: 'Battle Royale', communities: 389, players: '18.9M', rating: 4.4, discount: -30, price: 599, score: '89.2%', release: 'Июл 2017', low: true, desc: 'Королевская битва на 100 игроков с уникальной механикой строительства. Сражайся, строй и оставайся последним на острове.', icon: 'Castle', color: 'from-violet-500/30 to-purple-500/10' },
+  { name: 'Cyberpunk 2077', genre: 'RPG', communities: 96, players: '5.6M', rating: 4.3, discount: -90, price: 299, score: '88.6%', release: 'Дек 2020', low: true, desc: 'Масштабная RPG с открытым миром в неоновом мегаполисе будущего. Прокачивай киберимпланты и пиши свою историю в Найт-Сити.', icon: 'Cpu', color: 'from-cyan-500/30 to-blue-500/10' },
+  { name: 'Apex Legends', genre: 'Battle Royale', communities: 174, players: '9.1M', rating: 4.5, discount: -20, price: 480, score: '91.5%', release: 'Фев 2019', low: false, desc: 'Динамичная командная королевская битва с яркими легендами и фирменной системой пинга. Скорость, тактика и слаженность команды.', icon: 'Zap', color: 'from-orange-500/30 to-red-500/10' },
 ];
 
 const genres = ['Все', 'MOBA', 'Шутер', 'Battle Royale', 'RPG', 'Песочница'];
@@ -1414,6 +1414,11 @@ const Index = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Description */}
+              <p className={`text-[14px] leading-relaxed mb-6 ${t.text}`}>
+                {selectedGame.desc}
+              </p>
 
               {/* Meta grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
