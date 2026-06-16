@@ -1449,6 +1449,47 @@ const Index = () => {
                   Сообщества
                 </button>
               </div>
+
+              {/* Similar games */}
+              {(() => {
+                const similar = games.filter(
+                  (g) => g.genre === selectedGame.genre && g.name !== selectedGame.name
+                );
+                if (similar.length === 0) return null;
+                return (
+                  <div className="mt-6">
+                    <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>
+                      ПОХОЖИЕ ИГРЫ · {selectedGame.genre.toUpperCase()}
+                    </h3>
+                    <div className="flex flex-col gap-2">
+                      {similar.map((g) => (
+                        <button
+                          key={g.name}
+                          onClick={() => setSelectedGame(g)}
+                          className={`flex items-center gap-3 rounded-2xl border p-2.5 text-left transition-colors ${t.border} ${t.hover}`}
+                        >
+                          <div className={`w-12 h-9 rounded-md shrink-0 bg-gradient-to-br ${g.color} flex items-center justify-center`}>
+                            <Icon name={g.icon} size={17} className={t.text} />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className={`text-[14px] font-600 truncate ${t.text}`}>{g.name}</div>
+                            <div className={`flex items-center gap-1 text-[12px] ${t.muted}`}>
+                              <Icon name="Star" size={12} className="text-amber-400" />
+                              {g.score}
+                            </div>
+                          </div>
+                          <span className={`flex items-center justify-center h-7 px-2 rounded-md text-[12px] font-700 ${g.discount <= -75 ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-500'}`}>
+                            {g.discount}%
+                          </span>
+                          <span className={`text-[14px] font-600 ${t.text}`}>
+                            {g.price === 0 ? '0 ₽' : `${g.price} ₽`}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
