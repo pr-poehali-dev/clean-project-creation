@@ -97,71 +97,80 @@ const sysReq = [
   { icon: 'HardDrive', label: 'Место на диске', value: '40 ГБ' },
 ];
 
-const gameAchievements: Record<string, { icon: string; title: string; desc: string; got: boolean }[]> = {
+type Rarity = 'Обычное' | 'Редкое' | 'Эпическое' | 'Легендарное';
+
+const gameAchievements: Record<string, { icon: string; title: string; desc: string; rarity: Rarity; points: number; rate: string }[]> = {
   'Dota 2': [
-    { icon: 'Swords', title: 'Первая кровь', desc: 'Соверши первое убийство в матче', got: true },
-    { icon: 'Crown', title: 'Рампага', desc: 'Убей 5 героев подряд без смертей', got: true },
-    { icon: 'Castle', title: 'Разрушитель', desc: 'Уничтожь трон вражеской команды', got: true },
-    { icon: 'Coins', title: 'Богач', desc: 'Накопи 25 000 золота за матч', got: false },
-    { icon: 'Trophy', title: 'Аркана', desc: 'Получи особый скин на героя', got: false },
-    { icon: 'Zap', title: 'Имба', desc: 'Победа меньше чем за 20 минут', got: false },
+    { icon: 'Swords', title: 'Первая кровь', desc: 'Совершите первое убийство героя в матче. Даёт команде бонусное золото и задаёт тон началу игры.', rarity: 'Обычное', points: 10, rate: '78%' },
+    { icon: 'Crown', title: 'Рампага', desc: 'Убейте 5 вражеских героев подряд, не погибнув. Высшая серия убийств, которую объявляет диктор.', rarity: 'Эпическое', points: 50, rate: '6%' },
+    { icon: 'Castle', title: 'Разрушитель трона', desc: 'Уничтожьте Древний (трон) вражеской команды и завершите матч победой.', rarity: 'Обычное', points: 15, rate: '64%' },
+    { icon: 'Coins', title: 'Богатей Радианта', desc: 'Накопите 25 000 золота за один матч. Требует отличного фарма и контроля карты.', rarity: 'Редкое', points: 30, rate: '21%' },
+    { icon: 'Trophy', title: 'Обладатель Арканы', desc: 'Получите легендарный скин Аркана для любого героя. Меняет анимации и эффекты.', rarity: 'Легендарное', points: 100, rate: '2%' },
+    { icon: 'Zap', title: 'Имба-победа', desc: 'Выиграйте матч менее чем за 20 минут. Полное доминирование над противником.', rarity: 'Редкое', points: 40, rate: '12%' },
   ],
   'Valorant': [
-    { icon: 'Target', title: 'Эйс', desc: 'Убей всю команду противника в раунде', got: true },
-    { icon: 'Crosshair', title: 'Хедхантер', desc: '500 хедшотов за карьеру', got: true },
-    { icon: 'ShieldCheck', title: 'Клатч', desc: 'Выиграй раунд 1 против 3', got: false },
-    { icon: 'Flame', title: 'Спайк готов', desc: 'Установи спайк 50 раз', got: true },
-    { icon: 'Crown', title: 'Радиант', desc: 'Достигни высшего ранга', got: false },
-    { icon: 'Zap', title: 'Молниеносный', desc: 'Победа всухую 13:0', got: false },
+    { icon: 'Target', title: 'Эйс', desc: 'Уничтожьте всех пятерых противников в одном раунде в одиночку.', rarity: 'Эпическое', points: 50, rate: '8%' },
+    { icon: 'Crosshair', title: 'Хедхантер', desc: 'Наберите 500 убийств выстрелами в голову за карьеру. Награда за точность.', rarity: 'Редкое', points: 35, rate: '18%' },
+    { icon: 'ShieldCheck', title: 'Клатч-мастер', desc: 'Выиграйте раунд в ситуации 1 против 3, оставшись последним в команде.', rarity: 'Эпическое', points: 45, rate: '9%' },
+    { icon: 'Flame', title: 'Спайк установлен', desc: 'Установите спайк 50 раз за матчи. Базовая задача атакующей стороны.', rarity: 'Обычное', points: 10, rate: '71%' },
+    { icon: 'Crown', title: 'Радиант', desc: 'Достигните высшего ранга Радиант — попадите в топ игроков региона.', rarity: 'Легендарное', points: 100, rate: '1%' },
+    { icon: 'Zap', title: 'Идеальный матч', desc: 'Выиграйте матч со счётом 13:0, не отдав противнику ни одного раунда.', rarity: 'Эпическое', points: 60, rate: '4%' },
   ],
   'Minecraft': [
-    { icon: 'Box', title: 'Первый блок', desc: 'Добудь свой первый блок', got: true },
-    { icon: 'Pickaxe', title: 'Шахтёр', desc: 'Найди алмазы под землёй', got: true },
-    { icon: 'Castle', title: 'Архитектор', desc: 'Построй дом из 1000 блоков', got: true },
-    { icon: 'Flame', title: 'В Незере', desc: 'Открой портал в Нижний мир', got: true },
-    { icon: 'Skull', title: 'Победитель', desc: 'Победи Дракона Края', got: false },
-    { icon: 'Sparkles', title: 'Зачарованный', desc: 'Зачаруй предмет до максимума', got: false },
+    { icon: 'Box', title: 'Получение древесины', desc: 'Добудьте свой первый блок дерева — первый шаг к крафту инструментов.', rarity: 'Обычное', points: 5, rate: '99%' },
+    { icon: 'Pickaxe', title: 'Алмазы!', desc: 'Найдите и добудьте алмазы глубоко под землёй. Лучший материал для брони.', rarity: 'Обычное', points: 15, rate: '82%' },
+    { icon: 'Castle', title: 'Архитектор', desc: 'Постройте сооружение из более чем 1000 блоков. Простор для творчества.', rarity: 'Редкое', points: 30, rate: '34%' },
+    { icon: 'Flame', title: 'В преисподнюю', desc: 'Постройте и активируйте портал в Нижний мир (Незер).', rarity: 'Обычное', points: 20, rate: '58%' },
+    { icon: 'Skull', title: 'Освобождение Края', desc: 'Победите Дракона Края — финального босса игры.', rarity: 'Эпическое', points: 75, rate: '11%' },
+    { icon: 'Sparkles', title: 'Зачарованный', desc: 'Зачаруйте предмет на максимальный уровень с помощью стола зачарования.', rarity: 'Редкое', points: 25, rate: '29%' },
   ],
   'Counter-Strike 2': [
-    { icon: 'Target', title: 'Эйс', desc: 'Убей пятерых в одном раунде', got: true },
-    { icon: 'Bomb', title: 'Сапёр', desc: 'Разминируй бомбу 25 раз', got: true },
-    { icon: 'Crosshair', title: 'Снайпер', desc: '100 убийств из AWP', got: true },
-    { icon: 'Knife', title: 'Ножевик', desc: 'Убей врага ножом', got: false },
-    { icon: 'Crown', title: 'Global Elite', desc: 'Получи высшее звание', got: false },
-    { icon: 'Trophy', title: 'MVP', desc: 'Стань MVP матча 50 раз', got: true },
+    { icon: 'Target', title: 'Эйс', desc: 'Убейте всех пятерых противников в одном раунде самостоятельно.', rarity: 'Эпическое', points: 50, rate: '7%' },
+    { icon: 'Bomb', title: 'Сапёр', desc: 'Обезвредьте установленную бомбу C4 25 раз за карьеру.', rarity: 'Обычное', points: 15, rate: '63%' },
+    { icon: 'Crosshair', title: 'Мастер AWP', desc: 'Совершите 100 убийств из снайперской винтовки AWP.', rarity: 'Редкое', points: 30, rate: '24%' },
+    { icon: 'Knife', title: 'С ножа', desc: 'Убейте противника ближним ударом ножа. Унизительно и стильно.', rarity: 'Редкое', points: 25, rate: '31%' },
+    { icon: 'Crown', title: 'Global Elite', desc: 'Достигните высшего звания Global Elite в соревновательном режиме.', rarity: 'Легендарное', points: 100, rate: '2%' },
+    { icon: 'Trophy', title: 'Лучший игрок', desc: 'Станьте MVP (самым ценным игроком) матча 50 раз.', rarity: 'Редкое', points: 35, rate: '19%' },
   ],
   'League of Legends': [
-    { icon: 'Swords', title: 'Пентакилл', desc: 'Убей всю команду в одиночку', got: false },
-    { icon: 'Castle', title: 'Покоритель', desc: 'Разрушь нексус противника', got: true },
-    { icon: 'Crown', title: 'Челленджер', desc: 'Достигни высшего дивизиона', got: false },
-    { icon: 'Shield', title: 'Несокрушимый', desc: 'Выиграй без единой смерти', got: true },
-    { icon: 'Sparkles', title: 'Коллекционер', desc: 'Открой 20 чемпионов', got: true },
-    { icon: 'Zap', title: 'Быстрая победа', desc: 'Выиграй за 15 минут', got: false },
+    { icon: 'Swords', title: 'Пентакилл', desc: 'Убейте всех пятерых чемпионов противника в одиночку за короткое время.', rarity: 'Легендарное', points: 100, rate: '3%' },
+    { icon: 'Castle', title: 'Покоритель', desc: 'Разрушьте Нексус вражеской базы и одержите победу.', rarity: 'Обычное', points: 15, rate: '66%' },
+    { icon: 'Crown', title: 'Челленджер', desc: 'Достигните высшего дивизиона Челленджер в рейтинговой игре.', rarity: 'Легендарное', points: 100, rate: '1%' },
+    { icon: 'Shield', title: 'Несокрушимый', desc: 'Выиграйте матч, не погибнув ни разу за всю игру.', rarity: 'Эпическое', points: 45, rate: '8%' },
+    { icon: 'Sparkles', title: 'Коллекционер', desc: 'Откройте и освойте 20 различных чемпионов.', rarity: 'Редкое', points: 30, rate: '27%' },
+    { icon: 'Zap', title: 'Стомп', desc: 'Выиграйте матч менее чем за 15 минут благодаря раннему преимуществу.', rarity: 'Редкое', points: 40, rate: '10%' },
   ],
   'Fortnite': [
-    { icon: 'Crown', title: 'Виктори Рояль', desc: 'Победи в королевской битве', got: true },
-    { icon: 'Castle', title: 'Строитель', desc: 'Построй 1000 конструкций', got: true },
-    { icon: 'Target', title: 'Снайпер', desc: 'Убей врага с 200 метров', got: false },
-    { icon: 'Users', title: 'Командный дух', desc: 'Победа в отряде из 4', got: true },
-    { icon: 'Sparkles', title: 'Модник', desc: 'Собери 50 скинов', got: false },
-    { icon: 'Zap', title: 'Молниеносный', desc: '10 убийств за матч', got: false },
+    { icon: 'Crown', title: 'Виктори Рояль', desc: 'Останьтесь последним выжившим и победите в королевской битве.', rarity: 'Эпическое', points: 50, rate: '14%' },
+    { icon: 'Castle', title: 'Главный строитель', desc: 'Возведите 1000 конструкций. Строительство — ключевая механика игры.', rarity: 'Обычное', points: 15, rate: '61%' },
+    { icon: 'Target', title: 'Дальнобойщик', desc: 'Убейте противника с дистанции более 200 метров.', rarity: 'Редкое', points: 30, rate: '22%' },
+    { icon: 'Users', title: 'Командный дух', desc: 'Одержите победу в режиме отряда из 4 игроков.', rarity: 'Обычное', points: 20, rate: '47%' },
+    { icon: 'Sparkles', title: 'Модник', desc: 'Соберите коллекцию из 50 косметических скинов.', rarity: 'Редкое', points: 25, rate: '33%' },
+    { icon: 'Zap', title: 'Зачистка', desc: 'Совершите 10 убийств за один матч.', rarity: 'Эпическое', points: 45, rate: '6%' },
   ],
   'Cyberpunk 2077': [
-    { icon: 'Cpu', title: 'Киберпсихоз', desc: 'Установи 10 имплантов', got: true },
-    { icon: 'Car', title: 'Гонщик', desc: 'Проедь 100 км по Найт-Сити', got: true },
-    { icon: 'Crosshair', title: 'Нетраннер', desc: 'Взломай 50 врагов', got: false },
-    { icon: 'BookOpen', title: 'Легенда', desc: 'Заверши основной сюжет', got: true },
-    { icon: 'Star', title: 'Самурай', desc: 'Найди все концовки игры', got: false },
-    { icon: 'Sparkles', title: 'Коллекционер', desc: 'Собери все легендарки', got: false },
+    { icon: 'Cpu', title: 'Киберпсихоз', desc: 'Установите 10 кибернетических имплантов в тело персонажа.', rarity: 'Редкое', points: 30, rate: '28%' },
+    { icon: 'Car', title: 'Гонщик Найт-Сити', desc: 'Проедьте суммарно 100 км по дорогам города на транспорте.', rarity: 'Обычное', points: 15, rate: '54%' },
+    { icon: 'Crosshair', title: 'Нетраннер', desc: 'Взломайте 50 противников или устройств с помощью кибердек.', rarity: 'Редкое', points: 35, rate: '23%' },
+    { icon: 'BookOpen', title: 'Легенда', desc: 'Завершите основную сюжетную линию игры.', rarity: 'Обычное', points: 25, rate: '49%' },
+    { icon: 'Star', title: 'Самурай', desc: 'Откройте все возможные концовки игры за несколько прохождений.', rarity: 'Легендарное', points: 100, rate: '4%' },
+    { icon: 'Sparkles', title: 'Коллекционер', desc: 'Соберите всё легендарное снаряжение и оружие в игре.', rarity: 'Эпическое', points: 60, rate: '7%' },
   ],
   'Apex Legends': [
-    { icon: 'Crown', title: 'Чемпион', desc: 'Стань чемпионом матча', got: true },
-    { icon: 'Target', title: 'Меткий стрелок', desc: 'Нанеси 2000 урона за игру', got: true },
-    { icon: 'Users', title: 'Командный игрок', desc: 'Воскреси союзника 25 раз', got: true },
-    { icon: 'Zap', title: 'Хищник', desc: 'Достигни ранга Predator', got: false },
-    { icon: 'Flame', title: 'Серия побед', desc: 'Победи 3 раза подряд', got: false },
-    { icon: 'Sparkles', title: 'Легенды', desc: 'Открой всех легенд', got: false },
+    { icon: 'Crown', title: 'Чемпион', desc: 'Станьте чемпионом матча — победите вместе с отрядом.', rarity: 'Эпическое', points: 50, rate: '15%' },
+    { icon: 'Target', title: 'Меткий стрелок', desc: 'Нанесите 2000 единиц урона за одну игру.', rarity: 'Редкое', points: 35, rate: '20%' },
+    { icon: 'Users', title: 'Командный игрок', desc: 'Воскресите павших союзников 25 раз. Поддержка решает.', rarity: 'Обычное', points: 15, rate: '57%' },
+    { icon: 'Zap', title: 'Хищник', desc: 'Достигните высшего ранга Apex Predator в сезоне.', rarity: 'Легендарное', points: 100, rate: '1%' },
+    { icon: 'Flame', title: 'Серия побед', desc: 'Одержите 3 победы в матчах подряд.', rarity: 'Эпическое', points: 45, rate: '9%' },
+    { icon: 'Sparkles', title: 'Все легенды', desc: 'Откройте всех доступных легенд (персонажей) в игре.', rarity: 'Редкое', points: 30, rate: '26%' },
   ],
+};
+
+const rarityStyle: Record<Rarity, string> = {
+  'Обычное': 'bg-gray-500/15 text-gray-400',
+  'Редкое': 'bg-blue-500/15 text-blue-400',
+  'Эпическое': 'bg-purple-500/15 text-purple-400',
+  'Легендарное': 'bg-amber-500/15 text-amber-400',
 };
 
 const gameReviews = [
@@ -779,39 +788,55 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Achievements */}
+              {/* Achievements (wiki) */}
               {(() => {
                 const list = gameAchievements[selectedGame.name] || [];
                 if (list.length === 0) return null;
-                const got = list.filter((a) => a.got).length;
+                const totalPoints = list.reduce((s, a) => s + a.points, 0);
                 return (
               <div className="mt-6">
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between mb-1">
                   <h3 className={`text-[13px] tracking-[0.06em] font-500 ${t.muted}`}>
                     ДОСТИЖЕНИЯ В ИГРЕ
                   </h3>
-                  <span className={`text-[13px] font-600 ${t.text}`}>
-                    {got} / {list.length}
+                  <span className={`flex items-center gap-1 text-[13px] font-600 ${t.text}`}>
+                    <Icon name="Award" size={14} className="text-amber-500" />
+                    {list.length} наград · {totalPoints} очков
                   </span>
                 </div>
-                {/* Progress bar */}
-                <div className={`h-1.5 rounded-full overflow-hidden mb-3 ${dark ? 'bg-white/[0.08]' : 'bg-black/[0.06]'}`}>
-                  <div className="h-full bg-amber-500 rounded-full transition-all" style={{ width: `${(got / list.length) * 100}%` }} />
-                </div>
+                <p className={`text-[12px] mb-3 ${t.muted}`}>
+                  Справочник всех достижений игры с описанием и редкостью
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {list.map((a) => (
                     <div
                       key={a.title}
-                      className={`flex items-center gap-3 rounded-2xl border p-3 ${t.border} ${a.got ? '' : 'opacity-50'}`}
+                      className={`rounded-2xl border p-3.5 ${t.border}`}
                     >
-                      <div className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center ${a.got ? 'bg-amber-500/20 text-amber-500' : dark ? 'bg-white/[0.06] text-[#7a7a7a]' : 'bg-black/[0.05] text-[#9a9a9a]'}`}>
-                        <Icon name={a.got ? a.icon : 'Lock'} size={18} fallback="Trophy" />
+                      <div className="flex items-start gap-3">
+                        <div className="w-11 h-11 rounded-xl shrink-0 flex items-center justify-center bg-amber-500/20 text-amber-500">
+                          <Icon name={a.icon} size={20} fallback="Trophy" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className={`text-[14px] font-600 ${t.text}`}>{a.title}</span>
+                            <span className={`text-[10px] font-600 px-1.5 py-0.5 rounded-full ${rarityStyle[a.rarity]}`}>
+                              {a.rarity}
+                            </span>
+                          </div>
+                          <p className={`text-[12px] leading-relaxed mt-1 ${t.muted}`}>{a.desc}</p>
+                          <div className={`flex items-center gap-3 mt-2 text-[11px] ${t.muted}`}>
+                            <span className="flex items-center gap-1">
+                              <Icon name="Star" size={12} className="text-amber-400" />
+                              {a.points} очков
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Icon name="Users" size={12} />
+                              {a.rate} получили
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <div className={`text-[13px] font-600 truncate ${t.text}`}>{a.title}</div>
-                        <div className={`text-[11px] truncate ${t.muted}`}>{a.desc}</div>
-                      </div>
-                      {a.got && <Icon name="CircleCheck" size={16} className="text-green-500 shrink-0" />}
                     </div>
                   ))}
                 </div>
