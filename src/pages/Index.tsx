@@ -89,6 +89,20 @@ const games = [
 
 const genres = ['Все', 'MOBA', 'Шутер', 'Battle Royale', 'RPG', 'Песочница'];
 
+const sysReq = [
+  { icon: 'Monitor', label: 'ОС', value: 'Windows 10 / 11 (64-bit)' },
+  { icon: 'Cpu', label: 'Процессор', value: 'Intel Core i5-8400 / Ryzen 5 2600' },
+  { icon: 'MemoryStick', label: 'Память', value: '8 ГБ ОЗУ' },
+  { icon: 'Gpu', label: 'Видеокарта', value: 'GeForce GTX 1060 / RX 580' },
+  { icon: 'HardDrive', label: 'Место на диске', value: '40 ГБ' },
+];
+
+const gameReviews = [
+  { name: 'NeoStrike', rating: 5, text: 'Залипаю каждый вечер, баланс на высоте. Однозначно рекомендую друзьям!', time: '2 дня назад' },
+  { name: 'LunaQueen', rating: 5, text: 'Лучшая в своём жанре. Графика, звук и геймплей — всё на уровне.', time: '5 дней назад' },
+  { name: 'GhostByte', rating: 4, text: 'Отличная игра, но иногда долгий поиск матча. В остальном супер.', time: '1 неделю назад' },
+];
+
 const tournaments = [
   { name: 'Winter Clash 2026', game: 'Dota 2', prize: '500 000 ₽', date: '24 июня', teams: '32 / 32', status: 'soon', icon: 'Swords', color: 'from-red-500/30 to-orange-500/10' },
   { name: 'Radiant Cup', game: 'Valorant', prize: '250 000 ₽', date: '28 июня', teams: '18 / 24', status: 'open', icon: 'Crosshair', color: 'from-pink-500/30 to-rose-500/10' },
@@ -293,6 +307,12 @@ const Index = () => {
   const [gameSearch, setGameSearch] = useState('');
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [activeShot, setActiveShot] = useState(0);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
+
+  const toggleFavorite = (name: string) => {
+    setFavorites((f) => (f.includes(name) ? f.filter((n) => n !== name) : [...f, name]));
+  };
 
   const toggleSort = (key: string) => {
     setSortBy((s) =>
@@ -302,7 +322,8 @@ const Index = () => {
 
   const filteredGames = games
     .filter((g) => genre === 'Все' || g.genre === genre)
-    .filter((g) => g.name.toLowerCase().includes(gameSearch.toLowerCase()));
+    .filter((g) => g.name.toLowerCase().includes(gameSearch.toLowerCase()))
+    .filter((g) => !onlyFavorites || favorites.includes(g.name));
 
   const sortGames = (list: typeof games) => {
     const arr = [...list];
@@ -852,6 +873,15 @@ const Index = () => {
 
             {/* Genre filters */}
             <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
+              <button
+                onClick={() => setOnlyFavorites((v) => !v)}
+                className={`flex items-center gap-1.5 h-9 px-4 rounded-full text-[14px] font-500 whitespace-nowrap transition-colors ${
+                  onlyFavorites ? 'bg-red-500 text-white' : `border ${t.border} ${t.text} ${t.hover}`
+                }`}
+              >
+                <Icon name="Heart" size={15} className={onlyFavorites ? 'fill-white' : ''} />
+                Избранное{favorites.length > 0 && ` · ${favorites.length}`}
+              </button>
               {genres.map((g) => (
                 <button
                   key={g}
@@ -900,12 +930,18 @@ const Index = () => {
                       <div className={`w-16 h-9 rounded-md shrink-0 bg-gradient-to-br ${g.color} flex items-center justify-center`}>
                         <Icon name={g.icon} size={18} className={t.text} />
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className={`text-[14px] font-600 truncate ${t.text}`}>{g.name}</div>
                         {g.low && (
                           <span className={`text-[11px] ${t.muted}`}>исторический минимум</span>
                         )}
                       </div>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleFavorite(g.name); }}
+                        className={`shrink-0 transition-colors ${favorites.includes(g.name) ? 'text-red-500' : `${t.muted} hover:text-red-500`}`}
+                      >
+                        <Icon name="Heart" size={17} className={favorites.includes(g.name) ? 'fill-red-500' : ''} />
+                      </button>
                     </div>
 
                     {/* Discount */}
@@ -948,8 +984,10 @@ const Index = () => {
 
               {filteredGames.length === 0 && (
                 <div className={`py-12 text-center ${t.muted}`}>
-                  <Icon name="SearchX" size={32} className="mx-auto mb-2" />
-                  <p className="text-[14px]">Ничего не найдено</p>
+                  <Icon name={onlyFavorites && favorites.length === 0 ? 'HeartOff' : 'SearchX'} size={32} className="mx-auto mb-2" />
+                  <p className="text-[14px]">
+                    {onlyFavorites && favorites.length === 0 ? 'Пока нет избранных игр' : 'Ничего не найдено'}
+                  </p>
                 </div>
               )}
             </div>
@@ -1392,12 +1430,20 @@ const Index = () => {
             {/* Banner */}
             <div className={`relative h-36 bg-gradient-to-br ${selectedGame.color} shrink-0 flex items-center justify-center`}>
               <Icon name={selectedGame.icon} size={56} className={t.text} />
-              <button
-                onClick={() => setSelectedGame(null)}
-                className={`absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center ${dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'} hover:scale-105 transition-transform`}
-              >
-                <Icon name="X" size={18} />
-              </button>
+              <div className="absolute top-4 right-4 flex gap-2">
+                <button
+                  onClick={() => toggleFavorite(selectedGame.name)}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center hover:scale-105 transition-transform ${favorites.includes(selectedGame.name) ? 'bg-red-500 text-white' : dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'}`}
+                >
+                  <Icon name="Heart" size={18} className={favorites.includes(selectedGame.name) ? 'fill-white' : ''} />
+                </button>
+                <button
+                  onClick={() => setSelectedGame(null)}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center ${dark ? 'bg-black/40 text-white' : 'bg-white/70 text-[#1a1a1a]'} hover:scale-105 transition-transform`}
+                >
+                  <Icon name="X" size={18} />
+                </button>
+              </div>
               {selectedGame.low && (
                 <span className="absolute bottom-4 left-5 text-[11px] font-600 px-2.5 py-1 rounded-full bg-blue-500/90 text-white">
                   Исторический минимум
@@ -1493,6 +1539,100 @@ const Index = () => {
                 </button>
               </div>
 
+              {/* System requirements */}
+              <div className="mt-6">
+                <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>
+                  СИСТЕМНЫЕ ТРЕБОВАНИЯ
+                </h3>
+                <div className={`rounded-2xl border divide-y ${t.border} ${dark ? 'divide-white/[0.06]' : 'divide-black/[0.06]'}`}>
+                  {sysReq.map((r) => (
+                    <div key={r.label} className="flex items-center gap-3 px-4 py-2.5">
+                      <Icon name={r.icon} size={16} className={t.muted} fallback="Cpu" />
+                      <span className={`text-[13px] w-28 shrink-0 ${t.muted}`}>{r.label}</span>
+                      <span className={`text-[13px] font-500 ${t.text}`}>{r.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Reviews */}
+              <div className="mt-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className={`text-[13px] tracking-[0.06em] font-500 ${t.muted}`}>
+                    ОТЗЫВЫ ИГРОКОВ
+                  </h3>
+                  <span className="flex items-center gap-1 text-[13px] font-600 text-amber-500">
+                    <Icon name="Star" size={14} className="fill-amber-500" />
+                    {selectedGame.rating} / 5
+                  </span>
+                </div>
+                <div className="flex flex-col gap-3">
+                  {gameReviews.map((rev) => (
+                    <div key={rev.name} className={`rounded-2xl border p-3.5 ${t.border}`}>
+                      <div className="flex items-center gap-2.5 mb-1.5">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-600 ${t.activeBtn}`}>
+                          {rev.name[0]}
+                        </div>
+                        <div className="flex-1">
+                          <div className={`text-[13px] font-600 ${t.text}`}>{rev.name}</div>
+                          <div className={`text-[11px] ${t.muted}`}>{rev.time}</div>
+                        </div>
+                        <div className="flex gap-0.5">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Icon
+                              key={i}
+                              name="Star"
+                              size={12}
+                              className={i < rev.rating ? 'text-amber-400 fill-amber-400' : t.muted}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <p className={`text-[13px] leading-relaxed ${t.text}`}>{rev.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Similar by price */}
+              {(() => {
+                const byPrice = games
+                  .filter((g) => g.name !== selectedGame.name)
+                  .filter((g) => Math.abs(g.price - selectedGame.price) <= 300)
+                  .slice(0, 3);
+                if (byPrice.length === 0) return null;
+                return (
+                  <div className="mt-6">
+                    <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>
+                      ПОХОЖИЕ ПО ЦЕНЕ
+                    </h3>
+                    <div className="flex flex-col gap-2">
+                      {byPrice.map((g) => (
+                        <button
+                          key={g.name}
+                          onClick={() => openGameCard(g)}
+                          className={`flex items-center gap-3 rounded-2xl border p-2.5 text-left transition-colors ${t.border} ${t.hover}`}
+                        >
+                          <div className={`w-12 h-9 rounded-md shrink-0 bg-gradient-to-br ${g.color} flex items-center justify-center`}>
+                            <Icon name={g.icon} size={17} className={t.text} />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className={`text-[14px] font-600 truncate ${t.text}`}>{g.name}</div>
+                            <div className={`text-[12px] ${t.muted}`}>{g.genre}</div>
+                          </div>
+                          <span className={`flex items-center justify-center h-7 px-2 rounded-md text-[12px] font-700 ${g.discount <= -75 ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-500'}`}>
+                            {g.discount}%
+                          </span>
+                          <span className={`text-[14px] font-600 ${t.text}`}>
+                            {g.price === 0 ? '0 ₽' : `${g.price} ₽`}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Similar games */}
               {(() => {
                 const similar = games.filter(
@@ -1502,7 +1642,7 @@ const Index = () => {
                 return (
                   <div className="mt-6">
                     <h3 className={`text-[13px] tracking-[0.06em] font-500 mb-3 ${t.muted}`}>
-                      ПОХОЖИЕ ИГРЫ · {selectedGame.genre.toUpperCase()}
+                      ПОХОЖИЕ ПО ЖАНРУ · {selectedGame.genre.toUpperCase()}
                     </h3>
                     <div className="flex flex-col gap-2">
                       {similar.map((g) => (
