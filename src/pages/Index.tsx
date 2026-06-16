@@ -289,6 +289,10 @@ const Index = () => {
     );
   };
 
+  const filteredGames = games
+    .filter((g) => genre === 'Все' || g.genre === genre)
+    .filter((g) => g.name.toLowerCase().includes(gameSearch.toLowerCase()));
+
   const sortGames = (list: typeof games) => {
     const arr = [...list];
     const { key, dir } = sortBy;
@@ -814,6 +818,11 @@ const Index = () => {
               )}
             </div>
 
+            {/* Result count */}
+            <p className={`text-[13px] mb-4 ${t.muted}`}>
+              Найдено игр: <span className={`font-600 ${t.text}`}>{filteredGames.length}</span>
+            </p>
+
             {/* Genre filters */}
             <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
               {genres.map((g) => (
@@ -853,11 +862,7 @@ const Index = () => {
               </div>
 
               {/* Rows */}
-              {sortGames(
-                games
-                  .filter((g) => genre === 'Все' || g.genre === genre)
-                  .filter((g) => g.name.toLowerCase().includes(gameSearch.toLowerCase()))
-              ).map((g) => (
+              {sortGames(filteredGames).map((g) => (
                   <div
                     key={g.name}
                     onClick={() => openGame(g.name)}
@@ -914,10 +919,7 @@ const Index = () => {
                   </div>
                 ))}
 
-              {games
-                .filter((g) => genre === 'Все' || g.genre === genre)
-                .filter((g) => g.name.toLowerCase().includes(gameSearch.toLowerCase()))
-                .length === 0 && (
+              {filteredGames.length === 0 && (
                 <div className={`py-12 text-center ${t.muted}`}>
                   <Icon name="SearchX" size={32} className="mx-auto mb-2" />
                   <p className="text-[14px]">Ничего не найдено</p>
