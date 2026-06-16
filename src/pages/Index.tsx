@@ -280,6 +280,31 @@ const Index = () => {
   const [gameFilter, setGameFilter] = useState<string | null>(null);
   const [activeChat, setActiveChat] = useState(chats[0].id);
   const [feedTab, setFeedTab] = useState('all');
+  const [sortBy, setSortBy] = useState<{ key: string; dir: 'asc' | 'desc' }>({ key: 'discount', dir: 'asc' });
+
+  const toggleSort = (key: string) => {
+    setSortBy((s) =>
+      s.key === key ? { key, dir: s.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: 'asc' }
+    );
+  };
+
+  const sortGames = (list: typeof games) => {
+    const arr = [...list];
+    const { key, dir } = sortBy;
+    arr.sort((a, b) => {
+      let av: number | string = '';
+      let bv: number | string = '';
+      if (key === 'discount') { av = a.discount; bv = b.discount; }
+      else if (key === 'price') { av = a.price; bv = b.price; }
+      else if (key === 'rating') { av = parseFloat(a.score); bv = parseFloat(b.score); }
+      else if (key === 'name') { av = a.name; bv = b.name; }
+      if (typeof av === 'string') {
+        return dir === 'asc' ? av.localeCompare(bv as string) : (bv as string).localeCompare(av);
+      }
+      return dir === 'asc' ? av - (bv as number) : (bv as number) - av;
+    });
+    return arr;
+  };
 
   const openGame = (gameName: string) => {
     setGameFilter(gameName);
@@ -791,16 +816,27 @@ const Index = () => {
             <div className={`rounded-2xl border overflow-hidden ${t.border}`}>
               {/* Table head */}
               <div className={`hidden md:grid grid-cols-[1fr_90px_90px_90px_110px] items-center gap-3 px-4 py-2.5 text-[12px] font-600 tracking-wide ${t.muted} ${dark ? 'bg-white/[0.03]' : 'bg-black/[0.02]'}`}>
-                <span>Название</span>
-                <span className="text-center">Скидка</span>
-                <span className="text-right">Цена</span>
-                <span className="text-center">Рейтинг</span>
+                <button onClick={() => toggleSort('name')} className="flex items-center gap-1 hover:text-current transition-colors">
+                  Название
+                  <Icon name={sortBy.key === 'name' ? (sortBy.dir === 'asc' ? 'ChevronUp' : 'ChevronDown') : 'ChevronsUpDown'} size={13} className={sortBy.key === 'name' ? '' : 'opacity-40'} />
+                </button>
+                <button onClick={() => toggleSort('discount')} className="flex items-center justify-center gap-1 hover:text-current transition-colors">
+                  Скидка
+                  <Icon name={sortBy.key === 'discount' ? (sortBy.dir === 'asc' ? 'ChevronUp' : 'ChevronDown') : 'ChevronsUpDown'} size={13} className={sortBy.key === 'discount' ? '' : 'opacity-40'} />
+                </button>
+                <button onClick={() => toggleSort('price')} className="flex items-center justify-end gap-1 hover:text-current transition-colors">
+                  Цена
+                  <Icon name={sortBy.key === 'price' ? (sortBy.dir === 'asc' ? 'ChevronUp' : 'ChevronDown') : 'ChevronsUpDown'} size={13} className={sortBy.key === 'price' ? '' : 'opacity-40'} />
+                </button>
+                <button onClick={() => toggleSort('rating')} className="flex items-center justify-center gap-1 hover:text-current transition-colors">
+                  Рейтинг
+                  <Icon name={sortBy.key === 'rating' ? (sortBy.dir === 'asc' ? 'ChevronUp' : 'ChevronDown') : 'ChevronsUpDown'} size={13} className={sortBy.key === 'rating' ? '' : 'opacity-40'} />
+                </button>
                 <span className="text-right">Выход</span>
               </div>
 
               {/* Rows */}
-              {games
-                .filter((g) => genre === 'Все' || g.genre === genre)
+              {sortGames(games.filter((g) => genre === 'Все' || g.genre === genre))
                 .map((g) => (
                   <div
                     key={g.name}
