@@ -549,14 +549,18 @@ const Index = () => {
       >
         {selectedGame ? (
           <div className="max-w-[760px] mx-auto p-5 sm:p-7">
-            {/* Back bar */}
-            <button
-              onClick={closeGameCard}
-              className={`flex items-center gap-1.5 text-[14px] font-500 mb-5 ${t.muted} hover:${t.text} transition-colors`}
-            >
-              <Icon name="ArrowLeft" size={17} />
-              Назад к каталогу
-            </button>
+            {/* Breadcrumbs */}
+            <div className="flex items-center gap-1.5 text-[14px] mb-5">
+              <button
+                onClick={closeGameCard}
+                className={`flex items-center gap-1.5 font-500 ${t.muted} hover:${t.text} transition-colors`}
+              >
+                <Icon name="ArrowLeft" size={17} />
+                Игры
+              </button>
+              <Icon name="ChevronRight" size={15} className={t.muted} />
+              <span className={`font-600 ${t.text}`}>{selectedGame.name}</span>
+            </div>
 
             {/* Banner */}
             <div className={`relative h-44 rounded-3xl overflow-hidden bg-gradient-to-br ${selectedGame.color} flex items-center justify-center mb-6`}>
